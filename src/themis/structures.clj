@@ -1,32 +1,65 @@
 (ns themis.structures
-  (:use com.ashafa.clutch))
+  (:refer-clojure :exclude [assoc! conj! dissoc!])
+  (:require [clojure.core :as core])
+  (:use
+   [com.ashafa.clutch :only [put-document bulk-update get-document]]))
 
 
-(defn generate-project [name id & [people code tasks]]
-  {:_id id
-   :codename name
-   :people people
-   :codebase code
-   :tasks tasks})
+(defn now [] (new java.util.Date))
 
-(defn generate-person [first-name surname & [call-sign git-acc mail]]
-  {:first-name first-name
-   :surname surname
-   :call-sign call-sign
-   :email mail
-   :git git-acc})
 
-(defn generate-task [name description project & [people files]]
+(defn generic-entry [name & description]
   {:name name
-   :project project
-   :people people
    :description description
-   :files files})
+   :created-at (now)
+   :last-updated-at (now)})
 
-(defn generate-codebase [main-folder & [git]]
-  {:main-folder main-folder
-   :git git})
 
-#_(def ceres (generate-project "ceres" "0005" (generate-person "Konrad" "Kühne" "Konny" "kordano" "konrad.kuehne@rocketmail.com") (generate-codebase "~/projects/ceres" "https://github.com/kordano/ceres") (generate-task "apply place-record-linkage" "this and that" "ceres" "konny" "~/projects/ceres/index2.py")))
+(defn create-project [name description & [members git-url]]
+  (assoc (generic-entry name description)
+    :members members
+    :git-url git-url))
 
-#_(put-document "projects" ceres)
+
+(defn create-task [name description & [project people]]
+  (assoc (generic-entry name description)
+    :assignee people
+    :related-project project))
+
+
+(defn create-person [first-name surname & [date-of-birth address mail phone]]
+  (assoc (dissoc (generic-entry nil) :name)
+    :first-name first-name
+    :surname surname
+    :date-of-birh date-of-birth
+    :contact {:address address
+              :mail mail
+              :phone phone}))
+
+
+(def themis
+  (create-project
+   "themis"
+   "A generic management tool"
+   ["konny" "judy" "banana joe"]
+   "https://github.com/kordano/themis"))
+
+
+(def task1
+  (create-task
+   "create generic types"
+   nil
+   "themis"
+   ["konny"]))
+
+(def konny
+  (create-person
+   "Konrad"
+   "Kühne"
+   "15.04.1985"))
+;;(get-database "tasks")
+;;(get-database "people")
+
+(put-document "tasks" task1)
+(put-document "projects" themis)
+(put-document "people" konny)
