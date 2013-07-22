@@ -1,12 +1,15 @@
 (ns themis.database
-  (:use com.ashafa.clutch))
+  (:refer-clojure :exclude [assoc! conj! dissoc!])
+  (:require [clojure.core :as core])
+  (:use
+   [com.ashafa.clutch]))
 
-(defn create-project-db []
+#_(defn init-db []
   (do
-    (get-database "projects")))
+    (get-database "projects")
+    (get-database "tasks")
+    (get-database "people")))
 
 
-(bulk-update "projects" [{:name "ceres" :test {:sub "12" :sub2 "13"} :_id "0001"}
-                         {:name "acheron" :_id "0002"}])
-
-(get-document "projects" "0001")
+(defn get-all-projects []
+  (map #((get-document "projects" (% :key)) :name) (all-documents "projects")))
