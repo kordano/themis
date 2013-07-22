@@ -36,7 +36,6 @@
               :mail mail
               :phone phone}))
 
-
 (def themis
   (create-project
    "themis"
@@ -44,6 +43,12 @@
    ["konny" "judy" "banana joe"]
    "https://github.com/kordano/themis"))
 
+(def ceres
+  (create-project
+   "ceres"
+   "twitter location extraction"
+   ["konny"]
+   "https://github.com/kordano/ceres"))
 
 (def task1
   (create-task
@@ -61,5 +66,5 @@
 ;;(get-database "people")
 
 (put-document "tasks" task1)
-(put-document "projects" themis)
+(put-document "projects" ceres)
 (put-document "people" konny)
