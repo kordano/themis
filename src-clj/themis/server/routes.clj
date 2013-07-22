@@ -18,7 +18,7 @@
 
 ; run these three to start a server on the repl
 #_(use 'ring.adapter.jetty)
-#_(def server (run-jetty #'app {:port 9000 :join? false}))
+#_(def server (run-jetty #'app {:port 3000 :join? false}))
 
 ; control the server
 #_(.stop server)
