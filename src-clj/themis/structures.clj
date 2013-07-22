@@ -65,6 +65,6 @@
 ;;(get-database "tasks")
 ;;(get-database "people")
 
-(put-document "tasks" task1)
-(put-document "projects" ceres)
-(put-document "people" konny)
+;;(put-document "tasks" task1)
+;;(put-document "projects" ceres)
+;;(put-document "people" konny)
