@@ -13,6 +13,8 @@
                  [domina "1.0.1"]
                  [webfui "0.2.1"]
                  [jayq "2.3.0"]
+                 [ring/ring-json "0.2.0"]
+                 [cheshire "5.2.0"]
                  [com.cemerick/piggieback "0.0.4"]
                  [compojure "1.1.5"]
                  [garden "0.1.0-beta6"]
