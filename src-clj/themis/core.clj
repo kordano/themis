@@ -1,18 +1,40 @@
 (ns themis.core
   (:use compojure.core
         themis.views.index
+        cheshire.core
+        ring.util.response
         [hiccup.middleware :only (wrap-base-url)])
-  (:require [compojure.route :as route]
+  (:require [themis.database :as db]
+            [compojure.route :as route]
             [compojure.handler :as handler]
-            [compojure.response :as response]))
+            [compojure.response :as response]
+            [ring.middleware.json :as middleware]))
+
+
+
+(defn project-context []
+    (context "/projects" []
+             (defroutes documents-routes
+               (GET "/" [] (response (db/get-all-documents "projects")))
+               (context "/:id" [id] (defroutes document-routes (GET "/" [] (response (generate-string (db/find-project id)))))))))
+
+
+(defn user-context []
+  (context "/users" []
+           (defroutes documents-routes
+             (GET "/" [] (response (db/get-all-documents "themis-users")))
+             (context "/:id" [id] (defroutes document-routes (GET "/" [] (response (generate-string (db/find-user id)))))))))
+
 
 (defroutes main-routes
   (GET "/" [] (index-page))
+  (project-context)
+  (user-context)
   (route/resources "/")
   (route/not-found "These are not the droids you are looking for."))
 
 (def app
-  (-> (handler/site main-routes)
+  (-> (handler/api main-routes)
       (wrap-base-url)))
 
 
