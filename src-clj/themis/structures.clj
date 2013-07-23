@@ -1,70 +1,64 @@
 (ns themis.structures
   (:refer-clojure :exclude [assoc! conj! dissoc!])
   (:require [clojure.core :as core])
-  (:use
-   [com.ashafa.clutch :only [put-document bulk-update get-document]]))
+  (:use themis.database
+        [com.ashafa.clutch]))
 
 
 (defn now [] (new java.util.Date))
 
 
-(defn generic-entry [name & description]
-  {:name name
-   :description description
-   :created-at (now)
-   :last-updated-at (now)})
+(defrecord Project [_id members tasks created-at]
+  database-interaction
+  (inject [entry] (put-document "projects" entry)))
 
 
-(defn create-project [name description & [members git-url]]
-  (assoc (generic-entry name description)
-    :members members
-    :git-url git-url))
+(defrecord Task [description assigned-to deadline working-time created-at]
+  database-interaction
+  (inject [entry] (put-document "tasks" entry)))
 
 
-(defn create-task [name description & [project people]]
-  (assoc (generic-entry name description)
-    :assignee people
-    :related-project project))
+(defrecord User [_id person]
+  database-interaction
+  (inject [entry] (put-document "users" entry)))
 
 
-(defn create-person [first-name surname & [date-of-birth address mail phone]]
-  (assoc (dissoc (generic-entry nil) :name)
-    :first-name first-name
-    :surname surname
-    :date-of-birh date-of-birth
-    :contact {:address address
-              :mail mail
-              :phone phone}))
+(defrecord Person [first-name surname birthday contact]
+  database-interaction
+  (inject [entry] (put-document "people" entry)))
 
-(def themis
-  (create-project
-   "themis"
-   "A generic management tool"
-   ["konny" "judy" "banana joe"]
-   "https://github.com/kordano/themis"))
 
-(def ceres
-  (create-project
-   "ceres"
-   "twitter location extraction"
-   ["konny"]
-   "https://github.com/kordano/ceres"))
+(defrecord Contact [email address phone])
 
-(def task1
-  (create-task
-   "create generic types"
-   nil
-   "themis"
-   ["konny"]))
 
-(def konny
-  (create-person
-   "Konrad"
-   "Kühne"
-   "15.04.1985"))
-;;(get-database "tasks")
-;;(get-database "people")
+(defrecord Address [zipcode city street])
 
-;;(put-document "tasks" task1)
-;;(put-document "projects" ceres)
-;;(put-document "people" konny)
+
+(defn create-project
+  [name & {:keys [members tasks created-at] :or {created-at (now)}}]
+ (Project. name members tasks created-at))
+
+
+(defn create-task
+  [description & {:keys [assigned-to deadline working-time created-at] :or {created-at (now)}}]
+  (Task. description assigned-to deadline working-time created-at))
+
+
+(defn create-user
+  [name & person]
+  (User. name person))
+
+
+(defn create-person
+  [& {:keys [first-name surname birthday contact]}]
+  (Person. first-name surname birthday contact))
+
+
+(defn create-contact
+  [& {:keys [email address phone]}]
+  (Contact. email address phone))
+
+
+(defn create-address
+  [& {:keys [zipcode city street]}]
+  (Address. zipcode city street))
