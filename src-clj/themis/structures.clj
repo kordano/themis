@@ -1,12 +1,13 @@
 (ns themis.structures
   (:refer-clojure :exclude [assoc! conj! dissoc!])
   (:require [clojure.core :as core])
-  (:use themis.database
-        [com.ashafa.clutch]))
+  (:use [com.ashafa.clutch]))
 
 
 (defn now [] (new java.util.Date))
 
+(defprotocol database-interaction
+  (inject [entry]))
 
 (defrecord Project [_id members tasks created-at]
   database-interaction
@@ -20,7 +21,7 @@
 
 (defrecord User [_id person]
   database-interaction
-  (inject [entry] (put-document "users" entry)))
+  (inject [entry] (put-document "themis-users" entry)))
 
 
 (defrecord Person [first-name surname birthday contact]
