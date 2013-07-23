@@ -1,7 +1,7 @@
 (ns themis.views.css
   (:use [garden.core :only [css]]
         [garden.units :only [pt px em]]
-        [garden.color :as color]))
+        [garden.color :only [rgb]]))
 
 
 (def header-height (px 150))
@@ -71,8 +71,9 @@
 (defn- tasks-css []
   [:.task
    {:float :left
-    :color (color/rgb 113 39 131)}])
+    :color (rgb 255 0 0)}])
 
+(defn- people-css [])
 
 (defn overall-css []
   (css

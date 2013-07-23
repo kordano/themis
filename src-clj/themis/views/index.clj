@@ -5,9 +5,13 @@
         [hiccup.page :only [html5 include-js]]
         [hiccup.element :only [javascript-tag]]))
 
+(defn- run-clojurescript [path init]
+  (list
+   (include-js path)
+   (javascript-tag init)))
 
 (defn projects-list []
-  (let [projects (filter string? (get-all-projects))]
+  (let [projects (get-all-ids "projects")]
     [:ul#projectnav
      (map #(vector :li [:a {:href "#"} %]) projects)]))
 
@@ -28,7 +32,8 @@
       [:div#task-container
        [:a "Tasks"]
        [:ul
-        [:li.task [:a "test"]]]]]]]))
-
-
-#_(run-clojurescript "js/cljs.js" "themis.repl.connect()")
+        [:li.task [:a "test"]]]]]]
+    (run-clojurescript
+     "js/cljs.js"
+     "themis.repl.connect()")
+    ]))
