@@ -1,6 +1,6 @@
-(ns themis.server.routes
+(ns themis.core
   (:use compojure.core
-        themis.server.views
+        themis.views.index
         [hiccup.middleware :only (wrap-base-url)])
   (:require [compojure.route :as route]
             [compojure.handler :as handler]
