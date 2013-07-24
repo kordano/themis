@@ -11,23 +11,24 @@
             [ring.middleware.json :as middleware]))
 
 
-
 (defn project-context []
     (context "/projects" []
              (defroutes documents-routes
-               (GET "/" [] (response (db/get-all-documents "projects")))
-               (context "/:id" [id] (defroutes document-routes (GET "/" [] (response (generate-string (db/find-project id)))))))))
+               (GET "/" [] (response (generate-string (db/get-all-documents "projects") {:escape-non-ascii true})))
+               (context "/:id" [id] (defroutes document-routes (GET "/" [] (response (generate-string (db/find-project id) {:escape-non-ascii true}))))))))
+
 
 
 (defn user-context []
   (context "/users" []
            (defroutes documents-routes
              (GET "/" [] (response (db/get-all-documents "themis-users")))
-             (context "/:id" [id] (defroutes document-routes (GET "/" [] (response (generate-string (db/find-user id)))))))))
+             (context "/:id" [id] (defroutes document-routes (GET "/" [] (response (generate-string (db/find-user id) {:escape-non-ascii true}))))))))
 
 
 (defroutes main-routes
   (GET "/" [] (index-page))
+  (GET "/test" [] (generate-string (db/get-all-documents "projects")))
   (project-context)
   (user-context)
   (route/resources "/")
@@ -35,7 +36,8 @@
 
 (def app
   (-> (handler/api main-routes)
-      (wrap-base-url)))
+      (middleware/wrap-json-body)
+      (middleware/wrap-json-response)))
 
 
 ; run these three to start a server on the repl
