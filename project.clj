@@ -12,7 +12,9 @@
                  [hiccups "0.2.0"]
                  [domina "1.0.1"]
                  [webfui "0.2.1"]
-                 [jayq "2.3.0"]
+                 [jayq "2.4.0"]
+                 [cljs-ajax "0.1.5"]
+                 [liberator "0.9.0"]
                  [ring/ring-json "0.2.0"]
                  [cheshire "5.2.0"]
                  [com.cemerick/piggieback "0.0.4"]
@@ -37,6 +39,5 @@
    :builds
    [{:source-paths ["src-cljs"]
      :compiler
-     {:output-to "resources/public/js/cljs.js"
-      :optimizations :simple}}]}
-  )
+     {:output-to "resources/public/main.js"
+      :optimizations :simple}}]})
