@@ -20,14 +20,15 @@
   (html5
    [:head
     [:title "Themis"]
-    [:style {:type "text/css"} (overall-css)]]
+    [:style {:type "text/css"} (overall-css)]
+    (include-js "http://ajax.googleapis.com/ajax/libs/jquery/1.8.0/jquery.min.js")]
    [:body
     [:div#wrap
      [:div#header
       [:div#header-description
        [:a#projects "Projects"]]
       [:div#header-projects-list
-       (projects-list)]]
+       [:ul#projectnav]]]
      [:div#container
       [:div#task-container
        [:a "Tasks"]
