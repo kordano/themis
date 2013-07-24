@@ -36,6 +36,7 @@
 
 #_(map #(inject (create-project (first %) :members (last %))) battles)
 
+#_ (inject (create-project "darth wuffi"))
 
 (def generals [ "Akiyama Nobutomo"
                 "Amari Torayasu"
