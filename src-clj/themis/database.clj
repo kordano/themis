@@ -31,18 +31,6 @@
 
 ;; ------- Testing Stuff -------------------------------------------------------
 
-#_(inject
-  (create-person
-   :first-name "Konrad"
-   :surname "Kühne"
-   :birthday "15.04.1985"
-   :contact (create-contact
-             :email "konnykuehne@googlemail.com"
-             :address (create-address
-                       :zipcode "69151"
-                       :city "Neckargemünd"
-                       :street "Kurt-Lindemannstrasse 5")
-             :phone "0622372661")))
 
 #_(map #(inject (create-user %)) generals)
 
