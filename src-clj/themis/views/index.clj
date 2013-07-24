@@ -13,7 +13,7 @@
 (defn projects-list []
   (let [projects (get-all-ids "projects")]
     [:ul#projectnav
-     (map #(vector :li [:a {:href "#"} %]) projects)]))
+     (map #(vector :li [:a {:id %} %]) projects)]))
 
 
 (defn index-page []
@@ -25,7 +25,7 @@
     [:div#wrap
      [:div#header
       [:div#header-description
-       [:a "Projects"]]
+       [:a#projects "Projects"]]
       [:div#header-projects-list
        (projects-list)]]
      [:div#container
@@ -34,6 +34,5 @@
        [:ul
         [:li.task [:a "test"]]]]]]
     (run-clojurescript
-     "js/cljs.js"
-     "themis.repl.connect()")
-    ]))
+     "resources/main.js"
+     "themis.repl.connect()")]))
