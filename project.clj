@@ -8,11 +8,13 @@
   :source-paths ["src-clj"]
   :dependencies [[org.clojure/clojure "1.5.1"]
                  [ring/ring-jetty-adapter "1.1.0"]
+                 [org.clojure/core.async "0.1.0-SNAPSHOT"]
                  [hiccup "1.0.2"]
                  [hiccups "0.2.0"]
                  [domina "1.0.1"]
                  [webfui "0.2.1"]
                  [jayq "2.4.0"]
+                 [http-kit "2.1.5"]
                  [cljs-ajax "0.1.5"]
                  [liberator "0.9.0"]
                  [ring/ring-json "0.2.0"]
@@ -21,6 +23,8 @@
                  [compojure "1.1.5"]
                  [garden "0.1.0-beta6"]
                  [com.ashafa/clutch "0.4.0-RC1"]]
+
+  :repositories {"sonatype-oss-public" "https://oss.sonatype.org/content/groups/public/"}
 
   :ring {:handler themis.routes/app}
 
