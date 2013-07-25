@@ -6,27 +6,29 @@
 
   ;; CLJ source path
   :source-paths ["src-clj"]
-  :dependencies [[org.clojure/clojure "1.5.1"]
+  :dependencies [ ;; Server side
+                 [org.clojure/clojure "1.5.1"]
+                 [ring "1.2.0"]
                  [ring/ring-jetty-adapter "1.1.0"]
-                 [org.clojure/core.async "0.1.0-SNAPSHOT"]
-                 [hiccup "1.0.2"]
-                 [hiccups "0.2.0"]
-                 [domina "1.0.1"]
-                 [webfui "0.2.1"]
-                 [jayq "2.4.0"]
-                 [http-kit "2.1.5"]
-                 [cljs-ajax "0.1.5"]
-                 [liberator "0.9.0"]
                  [ring/ring-json "0.2.0"]
+                 [ring-middleware-format "0.3.0"]
+                 [hiccup "1.0.2"]
+                 [liberator "0.9.0"]
                  [cheshire "5.2.0"]
-                 [com.cemerick/piggieback "0.0.4"]
-                 [compojure "1.1.5"]
                  [garden "0.1.0-beta6"]
-                 [com.ashafa/clutch "0.4.0-RC1"]]
+                 [com.ashafa/clutch "0.4.0-RC1"]
+                 [compojure "1.1.5"]
+                 ;; Client side
+                 [org.clojure/clojurescript "0.0-1820"]
+                 [hiccups "0.2.0"]
+                 [org.clojure/core.async "0.1.0-SNAPSHOT"]
+                 [prismatic/dommy "0.1.1"]
+                 [com.cemerick/piggieback "0.0.4"]
+                 ]
 
   :repositories {"sonatype-oss-public" "https://oss.sonatype.org/content/groups/public/"}
 
-  :ring {:handler themis.routes/app}
+  :ring {:handler themis.core/app}
 
   :plugins [[lein-ring "0.8.3"]
             [lein-cljsbuild "0.3.2"]]
