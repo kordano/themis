@@ -16,8 +16,8 @@
 
 
 (defresource all-projects
-  :available-media-types ["application/json"]
-  :handle-ok (fn [_] (db/get-all-documents "projects")))
+  :available-media-types ["application/edn"]
+  :handle-ok (fn [_] {:projects (apply vector (map #(:_id %) (db/get-all-documents "projects")))}))
 
 
 (defresource specific-project [id]
@@ -27,7 +27,7 @@
 
 (let [static-dir (io/file "resources/public/")]
   (defresource static-dirty-hack [file]
-    :available-media-types ["text/javascript"]
+    :available-media-types ["text/javascript" "text/html"]
     :handle-ok (fn [_] (io/file static-dir file))))
 
 
@@ -37,6 +37,7 @@
    (GET "/projects" [] all-projects)
    (GET "/projects/:id" [id] (specific-project id))
    (GET "/resources/:resource" [resource] (static-dirty-hack resource))))
+
 
 
 (defn create-handler []
@@ -55,10 +56,10 @@
 (defn start [options]
   (run-jetty
    handler
-   (assoc options :join? false)))
+  (assoc options :join? false)))
 
 
-(def server (start {:port 3000}))
+#_(def server (start {:port 3000}))
 
 
 #_(.stop server)
