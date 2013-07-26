@@ -34,6 +34,5 @@
        [:a "Tasks"]
        [:ul
         [:li.task [:a "test"]]]]]]
-    (run-clojurescript
-     "resources/main.js"
-     "themis.repl.connect()")]))
+    (run-clojurescript "resources/main.js" "themis.repl.connect()")]))
+;
