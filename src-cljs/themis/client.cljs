@@ -1,16 +1,16 @@
 (ns themis.client
   (:require [dommy.core :as dom]
-            [goog.net.XhrIo :as xhr]
             [hiccups.runtime :as hiccupsrt]
-            [clojure.browser.repl :as repl]
+            [goog.net.XhrIo :as xhr]
             [cljs.reader :refer [read-string]]
             [cljs.core.async :as async :refer [chan close! put!]])
-  (:require-macros [hiccups.core :as h]
-                   [cljs.core.async.macros :refer [go alt!]]
+  (:require-macros [cljs.core.async.macros :refer [go alt!]]
+                   [hiccups.core :as hiccups]
                    [dommy.macros :refer [sel sel1]]))
 
+
 ; fire up a repl for the browser and eval namespace on top once connected
-#_(do (ns themis.clojure.start)
+#_(do (ns metis.clojure.start)
       (require 'cljs.repl.browser)
       (cemerick.piggieback/cljs-repl
        :repl-env (doto (cljs.repl.browser/repl-env :port 9000)
@@ -18,40 +18,46 @@
 
 
 (defn log [s]
-  (.log js/console s))
+  (.log js/console (str s)))
 
 
-(log "Started")
+(defn set-onclick-project [id]
+  (set! (.-onclick (sel1 (keyword (str "#" id)))) (fn [] (log id))))
 
 
 (defn GET [url]
   (let [ch (chan 1)]
     (xhr/send url
               (fn [event]
-                  (put! ch (-> event .-target .getResponseText))
-                  (close! ch)))
+                (put! ch (-> event .-target .getResponseText))
+                (close! ch)))
     ch))
 
 
 (defn get-edn [url]
   (go
-   (-> (.-buf (.-buf (GET url))) <! read-string)))
-
-(def state (GET "projects"))
-
-
-(.log js/console (first (.-buf (.-buf state))))
-
-(.log js/console (read-string (.-buf (.-buf state))))
-
-
-(def c (read-string (.-buf (.-buf state))))
-
-
-(go
- (log "Fetching edn ...")
- (log "Done"))
+   (-> (GET url)
+       <!
+       read-string)))
 
 
 
-#_(js/alert "red alert!")
+(defn show-all-projects []
+  (go
+   (let [data (<! (get-edn "projects"))
+         names (map #(:_id %) data)
+         html-list (hiccups/html (map #(vector :li [:a {:id %} %]) names))]
+     (-> (sel1 :#projectnav)
+         (dom/set-html! html-list)))))
+
+
+
+
+
+(defn init []
+  (do
+    (set! (.-onclick (sel1 :#header-description)) (fn [] (show-all-projects)))))
+
+
+#_(init)
+(set! (.-onload js/window) init)
