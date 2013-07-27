@@ -13,6 +13,7 @@
 (defroutes handler
   (GET "/" [] (response (index-page)))
   (GET "/projects" [] (response (db/get-all-documents "projects")))
+  (GET "/projects/:id" [id] (response (db/find-project id)))
   (GET "/users" [] (response (db/get-all-documents "themis-users")))
   (files ""  {:root "resources/public"})
   (not-found "<h1>404 Page not found</h1>"))
