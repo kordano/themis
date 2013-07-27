@@ -30,7 +30,8 @@
    ["& > li"
     {:float :left
      :margin-right (em 0.5)
-     :padding [0 (em 1)]}
+     :padding [0 (em 1)]
+     :cursor :pointer}
     [:& :a
      {:float :left
       :color default-font-color
@@ -45,7 +46,8 @@
   [:#header-description
    {:float :left
     :margin-right (em 0.5)
-    :padding [0 (em 1)]}
+    :padding [0 (em 1)]
+    :cursor :pointer}
    [:& :a
     {:float :left
      :color hover-color
@@ -57,8 +59,8 @@
       :text-decoration :none}]]])
 
 
-(defn- task-container-css []
-  [:#task-container
+(defn- member-container-css []
+  [:#member-container
    {:float :left
     :margin 0
     :padding-top (em 1.5)
@@ -68,8 +70,8 @@
      :font-weight :bold}]])
 
 
-(defn- tasks-css []
-  [:.task
+(defn- member-css []
+  [:.member
    {:float :left
     :color (rgb 255 0 0)}])
 
@@ -80,5 +82,5 @@
    (body-css)
    (nav-css)
    (header-logo-css)
-   (task-container-css)
-   (tasks-css)))
+   (member-container-css)
+   (member-css)))
