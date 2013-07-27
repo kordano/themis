@@ -1,4 +1,4 @@
-(ns themis.tricore
+(ns themis.core
   (:use ring.adapter.jetty
         ring.middleware.file
         ring.middleware.file-info
@@ -9,12 +9,14 @@
         [themis.database :as db]
         themis.views.index))
 
+
 (defroutes handler
   (GET "/" [] (response (index-page)))
-  (GET "/projects" [] (response (apply vector (map #(:_id %) (db/get-all-documents "projects")))))
-  (GET "/resources/:id" [id] (file-response "main.js" {:root "resources/public"}))
-  (not-found "<h1>404 Page not found</h1>")
-)
+  (GET "/projects" [] (response (db/get-all-documents "projects")))
+  (GET "/users" [] (response (db/get-all-documents "themis-users")))
+  (files ""  {:root "resources/public"})
+  (not-found "<h1>404 Page not found</h1>"))
+
 
 (def app (-> handler
              wrap-clojure-response))
