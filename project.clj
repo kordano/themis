@@ -20,11 +20,10 @@
                  [compojure "1.1.5"]
                  ;; Client side
                  [org.clojure/clojurescript "0.0-1820"]
-                 [hiccups "0.2.0"]
                  [org.clojure/core.async "0.1.0-SNAPSHOT"]
                  [prismatic/dommy "0.1.1"]
-                 [com.cemerick/piggieback "0.0.4"]
-                 ]
+                 [hiccups "0.2.0"]
+                 [com.cemerick/piggieback "0.0.4"]]
 
   :repositories {"sonatype-oss-public" "https://oss.sonatype.org/content/groups/public/"}
 
