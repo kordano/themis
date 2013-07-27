@@ -9,11 +9,8 @@
   :dependencies [ ;; Server side
                  [org.clojure/clojure "1.5.1"]
                  [ring "1.2.0"]
-                 [ring/ring-jetty-adapter "1.1.0"]
-                 [ring/ring-json "0.2.0"]
                  [ring-middleware-format "0.3.0"]
                  [hiccup "1.0.2"]
-                 [liberator "0.9.0"]
                  [cheshire "5.2.0"]
                  [garden "0.1.0-beta6"]
                  [com.ashafa/clutch "0.4.0-RC1"]
