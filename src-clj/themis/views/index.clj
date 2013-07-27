@@ -10,11 +10,6 @@
    (include-js path)
    (javascript-tag init)))
 
-(defn projects-list []
-  (let [projects (get-all-ids "projects")]
-    [:ul#projectnav
-     (map #(vector :li [:a {:id %} %]) projects)]))
-
 
 (defn index-page []
   (html5
@@ -34,5 +29,5 @@
        [:a "Tasks"]
        [:ul
         [:li.task [:a "test"]]]]]]
-    (run-clojurescript "resources/main.js" "themis.repl.connect()")]))
+    (run-clojurescript "main.js" "themis.repl.connect()")]))
 ;
