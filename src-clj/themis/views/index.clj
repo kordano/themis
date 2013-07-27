@@ -25,9 +25,9 @@
       [:div#header-projects-list
        [:ul#projectnav]]]
      [:div#container
-      [:div#task-container
-       [:a "Tasks"]
-       [:ul
-        [:li.task [:a "test"]]]]]]
+      [:div#member-container
+       [:a "Members"]
+       [:ul#memberlist
+        [:li.member [:a "test"]]]]]]
     (run-clojurescript "main.js" "themis.repl.connect()")]))
 ;
