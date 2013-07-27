@@ -21,10 +21,6 @@
   (.log js/console (str s)))
 
 
-(defn set-onclick-project [id]
-  (set! (.-onclick (sel1 (keyword (str "#" id)))) (fn [] (log id))))
-
-
 (defn GET [url]
   (let [ch (chan 1)]
     (xhr/send url
@@ -36,10 +32,22 @@
 
 (defn get-edn [url]
   (go
-   (-> (GET url)
-       <!
-       read-string)))
+   (-> (GET url) <! read-string)))
 
+
+(defn show-project-members [id]
+  (go
+   (let [data (<! (get-edn (str "projects/" id)))
+         html-member-list (hiccups/html (map #(vector :li [:a {:id %} %]) (:members data)))]
+     (-> (sel1 :#memberlist)
+         (dom/set-html! html-member-list))
+     (log html-member-list))))
+
+
+(defn set-onclick-project [id]
+  (do
+    (log id)
+    (set! (.-onclick (sel1 (keyword (str "#" id)))) (fn [] (show-project-members id)))))
 
 
 (defn show-all-projects []
@@ -48,10 +56,8 @@
          names (map #(:_id %) data)
          html-list (hiccups/html (map #(vector :li [:a {:id %} %]) names))]
      (-> (sel1 :#projectnav)
-         (dom/set-html! html-list)))))
-
-
-
+         (dom/set-html! html-list))
+     (log (map #(set-onclick-project %) names)))))
 
 
 (defn init []
@@ -60,4 +66,5 @@
 
 
 #_(init)
+
 (set! (.-onload js/window) init)
