@@ -1,13 +1,17 @@
 (ns themis.coreduo
-  (:require [themis.database :as db]
-            [clojure.java.io :as io]
-            [themis.views.index :refer [index-page]]
-            [ring.util.mime-type :refer [ext-mime-type]]
-            [ring.middleware.multipart-params :refer [wrap-multipart-params]]
-            [ring.adapter.jetty :refer [run-jetty]]
-            [liberator.core :refer [defresource]]
-            [compojure.core :refer [defroutes GET routes]]
-            [compojure.handler :refer [api]]))
+  (:use ring.adapter.jetty
+        ring.middleware.file
+        ring.middleware.file-info
+        ring.middleware.format-response
+        [ring.util.response :exclude (not-found)]
+        [themis.database :as db]
+        [clojure.java.io :as io]
+        themis.views.index
+        [liberator.core :only [defresource]]
+        compojure.core
+        compojure.route))
+
+
 
 
 (defresource home
@@ -17,7 +21,7 @@
 
 (defresource all-projects
   :available-media-types ["application/edn"]
-  :handle-ok (fn [_] {:projects (apply vector (map #(:_id %) (db/get-all-documents "projects")))}))
+  :handle-ok (fn [_] (db/get-all-documents "projects")))
 
 
 (defresource specific-project [id]
@@ -27,39 +31,23 @@
 
 (let [static-dir (io/file "resources/public/")]
   (defresource static-dirty-hack [file]
-    :available-media-types ["text/javascript" "text/html"]
+    :available-media-types ["text/javascript"]
     :handle-ok (fn [_] (io/file static-dir file))))
 
 
-(defn assemble-routes []
-  (routes
-   (GET "/" [] home)
-   (GET "/projects" [] all-projects)
-   (GET "/projects/:id" [id] (specific-project id))
-   (GET "/resources/:resource" [resource] (static-dirty-hack resource))))
+(defroutes handler
+  (GET "/" [] home)
+  (GET "/projects" [] all-projects)
+  (GET "/projects/:id" [id] (specific-project id))
+  (GET "/:resource" [resource] (static-dirty-hack resource)))
 
 
 
-(defn create-handler []
-  (fn [request]
-    ((->
-      (assemble-routes)
-      api
-      wrap-multipart-params)
-     request)))
 
+(def app (-> handler
+             wrap-clojure-response))
 
-(defn handler [request]
-  ((create-handler) request))
-
-
-(defn start [options]
-  (run-jetty
-   handler
-  (assoc options :join? false)))
-
-
-#_(def server (start {:port 3000}))
+#_(def server (run-jetty #'app {:port 3000 :join? false}))
 
 
 #_(.stop server)
