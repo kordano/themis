@@ -35,10 +35,17 @@
    (-> (GET url) <! read-string)))
 
 
+(defn create-member-list [data]
+  (hiccups/html
+   (map #(vector :li [:a.member {:id %} %]) (:members data))
+   [:input {:type "text" :name "name" :onsubmit :false}]))
+
+
+
 (defn show-project-members [id]
   (go
    (let [data (<! (get-edn (str "projects/" id)))
-         html-member-list (hiccups/html (map #(vector :li [:a {:id %} %]) (:members data)))]
+         html-member-list (create-member-list data)]
      (-> (sel1 :#memberlist)
          (dom/set-html! html-member-list)))))
 
