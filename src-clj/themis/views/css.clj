@@ -7,14 +7,16 @@
 (def header-height (px 150))
 (def default-font "Open Sans")
 (def header-font-size (pt 12))
-(def default-font-color "#FFFFFF")
-(def hover-color "#F27E18")
-(def default-background-color "#242424")
+(def default-font-color (rgb 255 255 255))
+(def hover-color (rgb 242 126 24))
+(def dark-background-color (rgb 36 36 36))
+(def overall-background-color (rgb 243 243 243))
 
 (defn- body-css []
   [:body :html
    {:font-family default-font
     :font-size header-font-size
+    :background overall-background-color
     :margin 0}])
 
 
@@ -22,7 +24,7 @@
   [:#projectnav
    {:margin 0
     :padding [0 (em 1)]
-    :background default-background-color
+    :background dark-background-color
     :height (em 3)
     :text-decoration :none
     :list-style :none}
@@ -64,22 +66,34 @@
   [:#member-container
    {:float :left
     :margin 0
+    :width (px 300)
     :padding-top (em 1.5)
     :padding-left (em 1.5)
     :list-style :none}
    ["& > a"
     {:text-align :center
-     :font-weight :bold}]])
+     :font-weight :bold}]
+   ["& > button"
+    {:float :right
+     :border-style :none
+     :cursor :pointer
+     :color default-font-color
+     :background dark-background-color}
+    [:&:hover
+     {:color hover-color}]]])
 
 (defn- memberlist-css []
   [:#memberlist
-   {:list-style :none}])
+   {:list-style :none
+    :padding 0
+    :margin-left 0}])
 
 
 (defn- member-css []
   [:.member
    {:float :left
-    :color (rgb 255 0 0)}])
+    :width (px 300)
+    :color dark-background-color}])
 
 
 (defn overall-css []
