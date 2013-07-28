@@ -2,6 +2,7 @@
   (:require [dommy.core :as dom]
             [hiccups.runtime :as hiccupsrt]
             [goog.net.XhrIo :as xhr]
+            [ajax.core :as ajax]
             [cljs.reader :refer [read-string]]
             [cljs.core.async :as async :refer [chan close! put!]])
   (:require-macros [cljs.core.async.macros :refer [go alt!]]
@@ -28,6 +29,15 @@
                 (put! ch (-> event .-target .getResponseText))
                 (close! ch)))
     ch))
+
+(defn POST [url payload]
+  (let [ch (chan 1)]
+    (xhr/send url
+              (fn [event]
+                (put! ch (-> event .-target .getResponseText))
+                (close! ch))
+              "POST"
+              payload)))
 
 
 (defn get-edn [url]
@@ -79,7 +89,10 @@
 
 (defn init []
   (do
-    (set! (.-onclick (sel1 :#header-description)) (fn [] (show-all-projects)))))
+    (set! (.-onclick (sel1 :#header-description)) (fn [] (show-all-projects)))
+    (set! (.-onclick
+           (sel1 :#user-add-button))
+          (fn [] (go (POST "/insert/users/" (.toString {:name "Ishii"})))))))
 
 
 #_(init)
