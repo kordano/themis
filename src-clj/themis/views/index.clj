@@ -26,8 +26,9 @@
        [:ul#projectnav]]]
      [:div#container
       [:div#member-container
-       [:a "Members"]
-       [:ul#memberlist
-        [:li.member [:a "test"]]]]]]
+       [:a "Members"] [:button.add-button {:type "button"} "Add"]
+       [:div#memberlistcontainer
+        [:ul#memberlist]]
+       [:div#membercreation]]]]
     (run-clojurescript "main.js" "themis.repl.connect()")]))
 ;
