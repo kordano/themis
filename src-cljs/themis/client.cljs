@@ -40,21 +40,31 @@
    (let [data (<! (get-edn (str "projects/" id)))
          html-member-list (hiccups/html (map #(vector :li [:a {:id %} %]) (:members data)))]
      (-> (sel1 :#memberlist)
-         (dom/set-html! html-member-list))
-     (log html-member-list))))
+         (dom/set-html! html-member-list)))))
+
+
+(defn make-project-active [id]
+  (do
+    (log (str id " active"))
+    (doseq [project (sel :.project)]
+      (dom/remove-class! project :active))
+    (-> (sel1 (keyword (str "#" id)))
+        (dom/add-class! :active))))
 
 
 (defn set-onclick-project [id]
   (do
-    (log id)
-    (set! (.-onclick (sel1 (keyword (str "#" id)))) (fn [] (show-project-members id)))))
+    (set! (.-onclick
+           (sel1 (keyword (str "#" id))))
+          (fn [] (do (show-project-members id)
+                    (make-project-active id))))))
 
 
 (defn show-all-projects []
   (go
    (let [data (<! (get-edn "projects"))
          names (map #(:_id %) data)
-         html-list (hiccups/html (map #(vector :li [:a {:id %} %]) names))]
+         html-list (hiccups/html (map #(vector :li [:a.project {:id %} %]) names))]
      (-> (sel1 :#projectnav)
          (dom/set-html! html-list))
      (log (map #(set-onclick-project %) names)))))
