@@ -26,7 +26,7 @@
        [:ul#projectnav]]]
      [:div#container
       [:div#member-container
-       [:a "Members"] [:button.add-button {:type "button"} "Add"]
+       [:a "Members"] [:button#user-add-button.add-button {:type "button"} "Add"]
        [:div#memberlistcontainer
         [:ul#memberlist]]
        [:div#membercreation]]]]
