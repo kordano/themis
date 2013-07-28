@@ -2,7 +2,6 @@
   (:require [dommy.core :as dom]
             [hiccups.runtime :as hiccupsrt]
             [goog.net.XhrIo :as xhr]
-            [ajax.core :as ajax]
             [cljs.reader :refer [read-string]]
             [cljs.core.async :as async :refer [chan close! put!]])
   (:require-macros [cljs.core.async.macros :refer [go alt!]]
@@ -16,6 +15,10 @@
       (cemerick.piggieback/cljs-repl
        :repl-env (doto (cljs.repl.browser/repl-env :port 9000)
                    cljs.repl/-setup)))
+
+
+(def state
+  (atom {:active-project nil}))
 
 
 (defn log [s]
@@ -37,7 +40,8 @@
                 (put! ch (-> event .-target .getResponseText))
                 (close! ch))
               "POST"
-              payload)))
+              payload)
+    ch))
 
 
 (defn get-edn [url]
@@ -48,7 +52,7 @@
 (defn create-member-list [data]
   (hiccups/html
    (map #(vector :li [:a.member {:id %} %]) (:members data))
-   [:input {:type "text" :name "name" :onsubmit :false}]))
+   [:input#add-user-field {:type "text" :name "name" :onsubmit :false}]))
 
 
 
@@ -66,7 +70,8 @@
     (doseq [project (sel :.project)]
       (dom/remove-class! project :active))
     (-> (sel1 (keyword (str "#" id)))
-        (dom/add-class! :active))))
+        (dom/add-class! :active))
+    (swap! state assoc :active-project id)))
 
 
 (defn set-onclick-project [id]
@@ -87,12 +92,24 @@
      (log (map #(set-onclick-project %) names)))))
 
 
+(defn post-edn [url]
+  (go
+   (-> (POST url (.toString {:name (dom/value (sel1 :#add-user-field))
+                             :project (:active-project (deref state))}))
+       <!
+       read-string)))
+
+(defn send-user-data []
+  (go
+   (let [data (<! (post-edn "/insert/users/"))
+         html-member-list (create-member-list data)]
+     (-> (sel1 :#memberlist)
+         (dom/set-html! html-member-list)))))
+
 (defn init []
   (do
     (set! (.-onclick (sel1 :#header-description)) (fn [] (show-all-projects)))
-    (set! (.-onclick
-           (sel1 :#user-add-button))
-          (fn [] (go (POST "/insert/users/" (.toString {:name "Ishii"})))))))
+    (set! (.-onclick (sel1 :#user-add-button)) (fn [] (send-user-data)))))
 
 
 #_(init)
