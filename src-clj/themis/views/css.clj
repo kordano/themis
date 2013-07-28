@@ -1,7 +1,7 @@
 (ns themis.views.css
   (:use [garden.core :only [css]]
         [garden.units :only [pt px em]]
-        [garden.color :only [rgb]]))
+        [garden.color :only [rgb lighten darken]]))
 
 
 (def header-height (px 150))
@@ -10,7 +10,6 @@
 (def default-font-color "#FFFFFF")
 (def hover-color "#F27E18")
 (def default-background-color "#242424")
-
 
 (defn- body-css []
   [:body :html
@@ -39,7 +38,9 @@
       :line-height 3}
      [:&:hover
       {:color hover-color
-       :text-decoration :none}]]]])
+       :text-decoration :none}]
+     [:&.active
+      {:color hover-color}]]]])
 
 
 (defn- header-logo-css []
@@ -55,7 +56,7 @@
      :line-height 3
      :font-weight :bold}
     [:&:hover
-     {:color hover-color
+     {:color (lighten hover-color 10)
       :text-decoration :none}]]])
 
 
@@ -64,10 +65,15 @@
    {:float :left
     :margin 0
     :padding-top (em 1.5)
-    :padding-left (em 1.5)}
+    :padding-left (em 1.5)
+    :list-style :none}
    ["& > a"
     {:text-align :center
      :font-weight :bold}]])
+
+(defn- memberlist-css []
+  [:#memberlist
+   {:list-style :none}])
 
 
 (defn- member-css []
@@ -75,7 +81,6 @@
    {:float :left
     :color (rgb 255 0 0)}])
 
-(defn- people-css [])
 
 (defn overall-css []
   (css
@@ -83,4 +88,5 @@
    (nav-css)
    (header-logo-css)
    (member-container-css)
+   (memberlist-css)
    (member-css)))
