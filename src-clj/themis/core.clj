@@ -24,8 +24,10 @@
 (def app (-> handler
              wrap-clojure-response))
 
-#_ (.stop server)
-#_ (.start server)
 
 #_(def server
     (run-jetty #'app {:port 3000 :join? false}))
+
+#_(do
+  (.stop server)
+  (.start server))
