@@ -1,4 +1,4 @@
-(defproject themis "0.0.1"
+(defproject themis "0.0.2"
   :description "A decent management service"
   :url "http://example.com/FIXME"
   :license {:name "Eclipse Public License"
