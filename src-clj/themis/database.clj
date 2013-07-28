@@ -13,20 +13,41 @@
     (get-database "people")))
 
 
-
 (defn get-all-ids [database]
   (map #(:id %) (all-documents database)))
+
 
 (defn find-project [name]
   (get-document "projects" name))
 
+
 (defn find-user [name]
   (get-document "themis-users" name))
+
 
 (defn get-all-documents [database]
   (map #(get-document database %) (get-all-ids database)))
 
-(get-all-documents "projects")
+
+(defn add-user-to-project [id member]
+  (let [document (get-document "projects" id)
+        current-members (:members document)
+        current-tasks (:tasks document)]
+    (if-not (contains? (set current-members) member) ;; find better error handling for existing entries in database
+      (update-document "projects" document {:members (conj current-members member)}))))
+
+
+(defn remove-user-from-project [id member]
+  (let [document (get-document "projects" id)
+        current-members (:members document)
+        current-tasks (:tasks document)]
+    (update-document "projects" document {:members (filter #(not= member %) current-members)})))
+
+
+(defn insert-user [name & {:keys [project]}]
+  (do
+    (inject (create-user name))
+    (add-user-to-project project name)))
 
 
 ;; ------- Testing Stuff -------------------------------------------------------
@@ -34,7 +55,7 @@
 
 #_(map #(inject (create-user %)) generals)
 
-#_(map #(inject (create-project (first %) :members (last %))) battles)
+#_(map #(inject (create-project (first %) :members (last %))) ued)
 
 #_ (inject (create-project "darth wuffi"))
 
