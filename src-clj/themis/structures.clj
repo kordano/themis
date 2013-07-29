@@ -19,9 +19,9 @@
   (inject [entry] (put-document "tasks" entry)))
 
 
-(defrecord User [_id person]
+(defrecord Member [_id person]
   database-interaction
-  (inject [entry] (put-document "themis-users" entry)))
+  (inject [entry] (put-document "members" entry)))
 
 
 (defrecord Person [first-name surname birthday contact]
@@ -45,9 +45,9 @@
   (Task. description assigned-to deadline working-time created-at))
 
 
-(defn create-user
+(defn create-member
   [name & person]
-  (User. name person))
+  (Member. name person))
 
 
 (defn create-person
