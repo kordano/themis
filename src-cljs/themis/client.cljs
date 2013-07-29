@@ -3,6 +3,7 @@
             [hiccups.runtime :as hiccupsrt]
             [goog.net.XhrIo :as xhr]
             [cljs.reader :refer [read-string]]
+            [themis.communicator :refer [get-edn post-edn]]
             [cljs.core.async :as async :refer [chan close! put!]])
   (:require-macros [cljs.core.async.macros :refer [go alt!]]
                    [hiccups.core :as hiccups]
@@ -25,48 +26,23 @@
   (.log js/console (str s)))
 
 
-(defn GET [url]
-  (let [ch (chan 1)]
-    (xhr/send url
-              (fn [event]
-                (put! ch (-> event .-target .getResponseText))
-                (close! ch)))
-    ch))
-
-(defn POST [url payload]
-  (let [ch (chan 1)]
-    (xhr/send url
-              (fn [event]
-                (put! ch (-> event .-target .getResponseText))
-                (close! ch))
-              "POST"
-              payload)
-    ch))
-
-
-(defn get-edn [url]
-  (go
-   (-> (GET url) <! read-string)))
-
 
 (defn create-member-list [data]
   (hiccups/html
-   (map #(vector :li [:a.member {:id %} %]) (:members data))
-   [:input#add-user-field {:type "text" :name "name" :onsubmit :false}]))
-
+   (map #(vector :li [:a.type {:id %} %]) (:members data))
+   [:input#add-member-field {:type "text" :name "name" :onsubmit :false}]))
 
 
 (defn show-project-members [id]
   (go
    (let [data (<! (get-edn (str "projects/" id)))
          html-member-list (create-member-list data)]
-     (-> (sel1 :#memberlist)
+     (-> (sel1 :#member-list)
          (dom/set-html! html-member-list)))))
 
 
 (defn make-project-active [id]
   (do
-    (log (str id " active"))
     (doseq [project (sel :.project)]
       (dom/remove-class! project :active))
     (-> (sel1 (keyword (str "#" id)))
@@ -92,24 +68,20 @@
      (log (map #(set-onclick-project %) names)))))
 
 
-(defn post-edn [url]
-  (go
-   (-> (POST url (.toString {:name (dom/value (sel1 :#add-user-field))
-                             :project (:active-project (deref state))}))
-       <!
-       read-string)))
-
 (defn send-user-data []
   (go
-   (let [data (<! (post-edn "/insert/users/"))
+   (let [data (<! (post-edn
+                   "/insert/users/"
+                   {:name (dom/value (sel1 :#add-member-field))
+                    :project (:active-project (deref state))}))
          html-member-list (create-member-list data)]
-     (-> (sel1 :#memberlist)
+     (-> (sel1 :#member-list)
          (dom/set-html! html-member-list)))))
 
 (defn init []
   (do
     (set! (.-onclick (sel1 :#header-description)) (fn [] (show-all-projects)))
-    (set! (.-onclick (sel1 :#user-add-button)) (fn [] (send-user-data)))))
+    (set! (.-onclick (sel1 :#member-add-button)) (fn [] (send-user-data)))))
 
 
 #_(init)
