@@ -3,7 +3,7 @@
   (:require [clojure.core :as core])
   (:use themis.structures
         [com.ashafa.clutch])
-  (:import [themis.structures Task Project User Person Contact Address]))
+  (:import [themis.structures Task Project Member Person Contact Address]))
 
 #_(defn init-db []
   (do
@@ -105,4 +105,4 @@
               '("Kawanakajima" ["Yamamoto Kansuke" "Kōsaka Masanobu"]) ])
 
 
-(map #(find-user %) (:members (find-project "Uedahara")))
+(map #(find-member %) (:members (find-project "Uedahara")))
