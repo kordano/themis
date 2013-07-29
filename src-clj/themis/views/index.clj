@@ -29,9 +29,11 @@
       [:div#header-description
        [:a#projects "Projects"]]
       [:div#header-projects-list
-       [:ul#projectnav]]]
+       [:ul#projectnav]
+       [:button#timer-button {:type "button"} "TIMER"]]]
      [:div#container
       (list-window "task" "Tasks")
-      (list-window "member" "Members")]]
+      (list-window "member" "Members")
+      ]]
     (run-clojurescript "main.js" "themis.repl.connect()")]))
 ;

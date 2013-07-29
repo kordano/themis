@@ -99,12 +99,51 @@
     :width (px 300)
     :color dark-background-color}])
 
+(defn- fun-timer-container-css []
+  [:#centercontainer
+   {:margin :auto
+    :padding-top (em 4.0)
+    :width (px 600)}])
+
+
+(defn- fun-timer-button-css []
+  [:#timer-button
+   {:float :right
+     :border-style :none
+     :cursor :pointer
+     :color default-font-color
+    :background dark-background-color}
+   [:&:hover
+     {:color hover-color}]])
+
+(defn- fun-timer-css []
+  [:#timer
+   {:width (px 500)
+    :background overall-background-color
+    :margin :auto}
+   [:& :a
+    {:padding 0
+     :font-size (pt 64)
+     :text-align :center
+     :font-family "Inconsolata"
+     :background dark-background-color
+     :color hover-color
+     :vertical-align :middle}]])
+
+(defn- wrap-css []
+  [:#wrap {:height "100%"}])
+
+(css (fun-timer-css))
 
 (defn overall-css []
   (css
    (body-css)
+   (wrap-css)
    (nav-css)
    (header-logo-css)
    (type-window-css)
    (type-list-css)
-   (type-css)))
+   (type-css)
+   (fun-timer-container-css)
+   (fun-timer-css)
+   (fun-timer-button-css)))
