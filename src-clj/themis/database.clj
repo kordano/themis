@@ -29,6 +29,18 @@
   (map #(get-document database %) (get-all-ids database)))
 
 
+(defn add-task-to-project [id task]
+  (let [document (get-document "projects" id)
+        current-tasks (:tasks document)]
+    (update-document "projects" document {:tasks (conj current-tasks task)})))
+
+
+(defn remove-task-from-project [id task]
+  (let [document (get-document "projects" id)
+        current-tasks (:tasks document)]
+    (update-document "projects" document {:tasks (filter #(not= task %) current-tasks)})))
+
+
 (defn add-member-to-project [id member]
   (let [document (get-document "projects" id)
         current-members (:members document)]
@@ -47,6 +59,12 @@
   (do
     (inject (create-member name))
     (add-member-to-project project name)))
+
+(defn insert-task [name & {:keys [project]}]
+  (do
+    (inject (create-task name))
+    (add-task-to-project project name)))
+
 
 
 ;; ------- Testing Stuff -------------------------------------------------------
