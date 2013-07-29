@@ -19,12 +19,24 @@
 
 
 (def state
-  (atom {:active-project nil}))
+  (atom {:active-project nil
+         :project-data nil}))
 
 
 (defn log [s]
   (.log js/console (str s)))
 
+
+(defn create-task-list [data]
+  (hiccups/html
+   (map #(vector :li [:a.type {:id %} %]) (:tasks data))
+   [:input#add-task-field {:type "text" :name "name" :onsubmit :false}]))
+
+
+(defn show-project-tasks [data]
+  (let [html-task-list (create-task-list data)]
+    (-> (sel1 :#task-list)
+        (dom/set-html! html-task-list))))
 
 
 (defn create-member-list [data]
@@ -33,29 +45,29 @@
    [:input#add-member-field {:type "text" :name "name" :onsubmit :false}]))
 
 
-(defn show-project-members [id]
+(defn show-project-members [data]
+  (let [html-member-list (create-member-list data)]
+    (-> (sel1 :#member-list)
+        (dom/set-html! html-member-list))))
+
+
+(defn activate-project [id]
   (go
-   (let [data (<! (get-edn (str "projects/" id)))
-         html-member-list (create-member-list data)]
-     (-> (sel1 :#member-list)
-         (dom/set-html! html-member-list)))))
-
-
-(defn make-project-active [id]
-  (do
-    (doseq [project (sel :.project)]
-      (dom/remove-class! project :active))
-    (-> (sel1 (keyword (str "#" id)))
-        (dom/add-class! :active))
-    (swap! state assoc :active-project id)))
+   (let [data (<! (get-edn (str "projects/" id)))]
+     (show-project-members data)
+     (show-project-tasks data)
+     (doseq [project (sel :.project)]
+       (dom/remove-class! project :active))
+     (-> (sel1 (keyword (str "#" id)))
+         (dom/add-class! :active))
+     (swap! state assoc :active-project id :project-data data))))
 
 
 (defn set-onclick-project [id]
   (do
     (set! (.-onclick
            (sel1 (keyword (str "#" id))))
-          (fn [] (do (show-project-members id)
-                    (make-project-active id))))))
+          (fn [] (activate-project id)))))
 
 
 (defn show-all-projects []
@@ -68,20 +80,33 @@
      (log (map #(set-onclick-project %) names)))))
 
 
-(defn send-user-data []
+(defn send-member-data []
   (go
    (let [data (<! (post-edn
-                   "/insert/users/"
+                   "/insert/member/"
                    {:name (dom/value (sel1 :#add-member-field))
                     :project (:active-project (deref state))}))
          html-member-list (create-member-list data)]
      (-> (sel1 :#member-list)
          (dom/set-html! html-member-list)))))
 
+
+(defn send-task-data []
+  (go
+   (let [data (<! (post-edn
+                   "/insert/task/"
+                   {:name (dom/value (sel1 :#add-task-field))
+                    :project (:active-project (deref state))}))
+         html-task-list (create-task-list data)]
+     (-> (sel1 :#task-list)
+         (dom/set-html! html-task-list)))))
+
+
 (defn init []
   (do
     (set! (.-onclick (sel1 :#header-description)) (fn [] (show-all-projects)))
-    (set! (.-onclick (sel1 :#member-add-button)) (fn [] (send-user-data)))))
+    (set! (.-onclick (sel1 :#member-add-button)) (fn [] (send-member-data)))
+    (set! (.-onclick (sel1 :#task-add-button)) (fn [] (send-task-data)))))
 
 
 #_(init)
