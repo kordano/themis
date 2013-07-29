@@ -10,6 +10,12 @@
    (include-js path)
    (javascript-tag init)))
 
+(defn list-window [type title]
+  [:div {:id (str type "-window") :class "type-window"}
+       [:a title] [:button.add-button {:type "button" :id (str type "-add-button")} "Add"]
+   [:div {:id (str type "-list-window")}
+        [:ul {:id (str type "-list") :class "type-list"}]]])
+
 
 (defn index-page []
   (html5
@@ -25,10 +31,7 @@
       [:div#header-projects-list
        [:ul#projectnav]]]
      [:div#container
-      [:div#member-container
-       [:a "Members"] [:button#user-add-button.add-button {:type "button"} "Add"]
-       [:div#memberlistcontainer
-        [:ul#memberlist]]
-       [:div#membercreation]]]]
+      (list-window "member" "Members")
+      (list-window "task" "Tasks")]]
     (run-clojurescript "main.js" "themis.repl.connect()")]))
 ;
