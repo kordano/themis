@@ -31,7 +31,7 @@
       [:div#header-projects-list
        [:ul#projectnav]]]
      [:div#container
-      (list-window "member" "Members")
-      (list-window "task" "Tasks")]]
+      (list-window "task" "Tasks")
+      (list-window "member" "Members")]]
     (run-clojurescript "main.js" "themis.repl.connect()")]))
 ;
