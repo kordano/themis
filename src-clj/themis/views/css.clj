@@ -62,14 +62,18 @@
       :text-decoration :none}]]])
 
 
-(defn- member-container-css []
-  [:#member-container
+
+(defn- type-window-css []
+  [:.type-window
    {:float :left
-    :margin 0
     :width (px 300)
-    :padding-top (em 1.5)
-    :padding-left (em 1.5)
-    :list-style :none}
+    :margin-top (em 1.5)
+    :margin-left (em 1.5)
+    :border-style :solid
+    :border-width (px 2)
+    :border-color dark-background-color
+    :list-style :none
+    :padding (em 0.3)}
    ["& > a"
     {:text-align :center
      :font-weight :bold}]
@@ -82,15 +86,15 @@
     [:&:hover
      {:color hover-color}]]])
 
-(defn- memberlist-css []
-  [:#memberlist
+(defn- type-list-css []
+  [:.type-list
    {:list-style :none
     :padding 0
     :margin-left 0}])
 
 
-(defn- member-css []
-  [:.member
+(defn- type-css []
+  [:.type
    {:float :left
     :width (px 300)
     :color dark-background-color}])
@@ -101,6 +105,6 @@
    (body-css)
    (nav-css)
    (header-logo-css)
-   (member-container-css)
-   (memberlist-css)
-   (member-css)))
+   (type-window-css)
+   (type-list-css)
+   (type-css)))
