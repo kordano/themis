@@ -15,8 +15,14 @@
 (defn add-task [name project]
   (response (db/insert-task name :project project)))
 
+
 (defn add-member [name project]
-    (response (db/insert-member name :project project)))
+  (response (db/insert-member name :project project)))
+
+
+(defn add-project [name]
+  (response "OK"))
+
 
 (defroutes handler
   (GET "/" [] (response (index-page)))
@@ -26,8 +32,9 @@
   (POST "/insert/member/" request (let [data (read-string (slurp (:body request)))]
                                    (add-member (:name data) (:project data))))
   (POST "/insert/task/" request (let [data (read-string (slurp (:body request)))]
-                                   (add-task (:name data) (:project data))))
-  (GET "/tasks" [] (response ))
+                                  (add-task (:name data) (:project data))))
+  (POST "/insert/project/" request (let [data (read-string (slurp (:body request)))]
+                                  (add-project (:name data))))
   (files ""  {:root "resources/public"})
   (not-found "<h1>404 Page not found</h1>"))
 
