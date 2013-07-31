@@ -65,6 +65,8 @@
     (inject (create-task name))
     (add-task-to-project project name)))
 
+(defn insert-project [name & {:keys [members]}]
+  (inject (create-project name :members members)))
 
 
 ;; ------- Testing Stuff -------------------------------------------------------
