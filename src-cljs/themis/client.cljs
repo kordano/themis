@@ -21,8 +21,6 @@
 (def state
   (atom {:active-project nil
          :project-data nil
-         :timer nil
-         :interval-id nil
          :container-state nil}))
 
 
@@ -113,51 +111,11 @@
      (show-all-projects))))
 
 
-(defn timer-init []
-  (let [time 9]
-    (do (swap! state assoc :container-state (-> (sel1 :#container) dom/html))
-        (-> (sel1 :#container)
-            (dom/set-html!
-             (hiccups/html
-              [:div#centercontainer
-               [:div#timer
-                [:a#timertext (str (inc time))]]])))
-        (swap! state assoc :timer time))))
-
-
-(defn reinstate []
-  (go
-   (-> (sel1 :#container)
-       (dom/set-html! (:container-state (deref state))))
-   (init)))
-
-
-(defn countdown-timer []
-  (let [time (:timer (deref state))]
-    (if (> time 0)
-      (go
-       (-> (sel1 :#timertext)
-           (dom/set-text! (str time)))
-       (swap! state assoc :timer (dec time)))
-      (go
-       (.clearInterval js/window (:interval-id (deref state)))
-       (-> (sel1 :#timertext)
-           (dom/set-text! "BOOM!"))
-       (.setTimeout js/window reinstate 1000)))))
-
-
-(defn run-timer []
-  (do
-    (timer-init)
-    (swap! state assoc :interval-id (.setInterval js/window countdown-timer 1000))))
-
-
 (defn init []
   (do
     (set! (.-onclick (sel1 :#projects)) (fn [] (show-all-projects)))
     (set! (.-onclick (sel1 :#member-add-button)) (fn [] (send-member-data)))
-    (set! (.-onclick (sel1 :#task-add-button)) (fn [] (send-task-data)))
-    (set! (.-onclick (sel1 :#timer-button)) (fn [] (run-timer)))))
+    (set! (.-onclick (sel1 :#task-add-button)) (fn [] (send-task-data)))))
 
 
 (set! (.-onload js/window) init)
