@@ -30,8 +30,7 @@
 
 (defn create-task-list [data]
   (hiccups/html
-   (map #(vector :li [:a.type {:id %} %]) (:tasks data))
-   [:input#add-task-field {:type "text" :name "name" :onsubmit :false}]))
+   (map #(vector :li [:a.type {:id %} %]) (:tasks data))))
 
 
 (defn show-project-tasks [data]
@@ -42,8 +41,7 @@
 
 (defn create-member-list [data]
   (hiccups/html
-   (map #(vector :li [:a.type {:id %} %]) (:members data))
-   [:input#add-member-field {:type "text" :name "name" :onsubmit :false}]))
+   (map #(vector :li [:a.type {:id %} %]) (:members data))))
 
 
 (defn show-project-members [data]
@@ -113,9 +111,7 @@
 
 (defn init []
   (do
-    (set! (.-onclick (sel1 :#projects)) (fn [] (show-all-projects)))
-    (set! (.-onclick (sel1 :#member-add-button)) (fn [] (send-member-data)))
-    (set! (.-onclick (sel1 :#task-add-button)) (fn [] (send-task-data)))))
+    (set! (.-onclick (sel1 :#projects)) (fn [] (show-all-projects)))))
 
 
 (set! (.-onload js/window) init)
