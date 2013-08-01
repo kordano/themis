@@ -1,6 +1,7 @@
 (ns themis.database
   (:refer-clojure :exclude [assoc! conj! dissoc!])
-  (:require [clojure.core :as core])
+  (:require [clojure.core :as core]
+            [clojure.string :refer [blank?]])
   (:use themis.structures
         [com.ashafa.clutch])
   (:import [themis.structures Task Project Member Person Contact Address]))
@@ -29,19 +30,21 @@
   (map #(get-document database %) (get-all-ids database)))
 
 
-(defn add-task-to-project [id task]
+(defn add-task-to-project [task id]
   (let [document (get-document "projects" id)
         current-tasks (:tasks document)]
-    (update-document "projects" document {:tasks (conj current-tasks task)})))
+    (if (blank? current-tasks)
+      (update-document "projects" document {:tasks (vector task)})
+      (update-document "projects" document {:tasks (conj current-tasks task)}))))
 
 
-(defn remove-task-from-project [id task]
+(defn remove-task-from-project [task id]
   (let [document (get-document "projects" id)
         current-tasks (:tasks document)]
     (update-document "projects" document {:tasks (filter #(not= task %) current-tasks)})))
 
 
-(defn add-member-to-project [id member]
+(defn add-member-to-project [member id]
   (let [document (get-document "projects" id)
         current-members (:members document)]
     (if-not (contains? (set current-members) member) ;; find better error handling for existing entries in database
@@ -58,15 +61,16 @@
 (defn insert-member [name & {:keys [project]}]
   (do
     (inject (create-member name))
-    (add-member-to-project project name)))
+    (add-member-to-project name project)))
 
 (defn insert-task [name & {:keys [project]}]
   (do
     (inject (create-task name))
-    (add-task-to-project project name)))
+    (add-task-to-project name project)))
 
 (defn insert-project [name & {:keys [members]}]
   (inject (create-project name :members members)))
+
 
 
 ;; ------- Testing Stuff -------------------------------------------------------
