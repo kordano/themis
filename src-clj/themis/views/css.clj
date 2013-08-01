@@ -17,6 +17,7 @@
    {:font-family default-font
     :font-size header-font-size
     :background overall-background-color
+    :height "100%"
     :margin 0}])
 
 
@@ -53,6 +54,7 @@
     :cursor :pointer}
    [:& :a
     {:float :left
+     :padding-left (em 0.5)
      :color hover-color
      :text-decoration :none
      :line-height 3
@@ -61,12 +63,20 @@
      {:color (lighten hover-color 10)
       :text-decoration :none}]]])
 
-
+(defn- add-button-css []
+  [:.add-button
+    {:float :right
+     :border-style :none
+     :cursor :pointer
+     :color default-font-color
+     :background dark-background-color}
+    [:&:hover
+     {:color hover-color}]])
 
 (defn- type-window-css []
   [:.type-window
    {:float :left
-    :width (px 300)
+    :width (px 350)
     :margin-top (em 1.5)
     :margin-left (em 1.5)
     :border-style :solid
@@ -77,14 +87,7 @@
    ["& > a"
     {:text-align :center
      :font-weight :bold}]
-   ["& > button"
-    {:float :right
-     :border-style :none
-     :cursor :pointer
-     :color default-font-color
-     :background dark-background-color}
-    [:&:hover
-     {:color hover-color}]]])
+   ])
 
 (defn- type-list-css []
   [:.type-list
@@ -133,7 +136,32 @@
 (defn- wrap-css []
   [:#wrap {:height "100%"}])
 
-(css (fun-timer-css))
+
+
+(defn- action-bar-css []
+  [:#action-bar
+   {:float :left
+    :padding 0
+    :margin 0
+    :background dark-background-color
+    :height "100%"}
+   [:ul
+    {:padding 0
+     :margin 0
+     :list-style :none}
+    [:li {}
+     [:a
+      {:display :block
+       :background dark-background-color
+       :padding (em 0.1)
+       :margin 0
+       :font-size (px 32)
+       :cursor :pointer
+       :color default-font-color}
+      [:&:hover
+       {:color hover-color}]]]]])
+
+(css (action-bar-css))
 
 (defn overall-css []
   (css
@@ -144,6 +172,5 @@
    (type-window-css)
    (type-list-css)
    (type-css)
-   (fun-timer-container-css)
-   (fun-timer-css)
-   (fun-timer-button-css)))
+   (action-bar-css)
+   (add-button-css)))
