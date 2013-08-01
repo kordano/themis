@@ -26,6 +26,8 @@
 
   :ring {:handler themis.core/app}
 
+  :main themis.core
+
   :plugins [[lein-ring "0.8.3"]
             [lein-cljsbuild "0.3.2"]]
 
