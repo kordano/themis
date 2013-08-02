@@ -12,6 +12,7 @@
 (def dark-background-color (rgb 36 36 36))
 (def overall-background-color (rgb 243 243 243))
 
+
 (defn- body-css []
   [:body :html
    {:font-family default-font
@@ -80,14 +81,13 @@
     :margin-top (em 1.5)
     :margin-left (em 1.5)
     :border-style :solid
-    :border-width (px 2)
+    :border-width (px 1)
     :border-color dark-background-color
     :list-style :none
     :padding (em 0.3)}
    ["& > a"
     {:text-align :center
-     :font-weight :bold}]
-   ])
+     :font-weight :bold}]])
 
 (defn- type-list-css []
   [:.type-list
@@ -95,12 +95,21 @@
     :padding 0
     :margin-left 0}])
 
-
 (defn- type-css []
   [:.type
    {:float :left
     :width (px 300)
     :color dark-background-color}])
+
+
+(defn- type-creation-window-css []
+  [:.creation-window
+   {:float :left
+    :list-style :none
+    :border-style :solid
+    :border-width (px 1)
+    :border-color dark-background-color}])
+
 
 (defn- fun-timer-container-css []
   [:#centercontainer
@@ -161,7 +170,6 @@
       [:&:hover
        {:color hover-color}]]]]])
 
-(css (action-bar-css))
 
 (defn overall-css []
   (css
@@ -173,4 +181,5 @@
    (type-list-css)
    (type-css)
    (action-bar-css)
+   (type-creation-window-css)
    (add-button-css)))
