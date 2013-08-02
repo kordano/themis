@@ -7,10 +7,18 @@
   (:import [themis.structures Task Project Member Person Contact Address]))
 
 
+(defn type-keys [type]
+  (cond
+   (= "task" type) (Task/getBasis)
+   (= "project" type) (Project/getBasis)
+   (= "member" type) (Member/getBasis)))
+
+
 (defn- run-clojurescript [path init]
   (list
    (include-js path)
    (javascript-tag init)))
+
 
 (defn list-window [type title]
   [:div {:id (str type "-window") :class "type-window"}
@@ -26,6 +34,12 @@
     [:li [:a "&#8853;"]]
     [:li [:a "&#8854;"]]
     [:li [:a "&#9760;"]]]])
+
+
+(defn creation-window [type]
+  [:div {:id (str type "-creation-window") :class "creation-window"}
+   [:ul (map #(vector :li [:a %]) (type-keys type))]])
+
 
 (defn index-page []
   (html5
@@ -43,5 +57,6 @@
      (action-bar)
      [:div#container
       (list-window "task" "Tasks")
-      (list-window "member" "Members")]]
+      (list-window "member" "Members")
+      (creation-window "task")]]
     (run-clojurescript "main.js" "themis.repl.connect()")]))
