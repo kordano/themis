@@ -74,10 +74,20 @@
     [:&:hover
      {:color hover-color}]])
 
+(defn- submit-button-css []
+  [:.submit-button
+    {:border-style :none
+     :cursor :pointer
+     :width "100%"
+     :color default-font-color
+     :background dark-background-color}
+    [:&:hover
+     {:color hover-color}]])
+
 (defn- type-window-css []
   [:.type-window
    {:float :left
-    :width (px 350)
+    :width "25%"
     :margin-top (em 1.5)
     :margin-left (em 1.5)
     :border-style :solid
@@ -106,9 +116,23 @@
   [:.creation-window
    {:float :left
     :list-style :none
+    :width "25%"
+    :margin-top (em 1.5)
+    :margin-left (em 1.5)
+    :padding (em 0.3)
     :border-style :solid
     :border-width (px 1)
-    :border-color dark-background-color}])
+    :border-color dark-background-color}
+   ["& > a"
+    {:text-align :center
+     :font-weight :bold}]
+   [:ul
+    {:margin 0
+     :padding 0}
+    [:li
+     {:list-style :none
+      :padding 0
+      :margin 0}]]])
 
 
 (defn- fun-timer-container-css []
@@ -171,6 +195,12 @@
        {:color hover-color}]]]]])
 
 
+(defn- input-field-css []
+  [:.input-field
+   {:float :right
+    :padding 0
+    :margin 0}])
+
 (defn overall-css []
   (css
    (body-css)
@@ -182,4 +212,6 @@
    (type-css)
    (action-bar-css)
    (type-creation-window-css)
+   (input-field-css)
+   (submit-button-css)
    (add-button-css)))
