@@ -36,9 +36,11 @@
     [:li [:a "&#9760;"]]]])
 
 
-(defn creation-window [type]
+(defn creation-window [type title]
   [:div {:id (str type "-creation-window") :class "creation-window"}
-   [:ul (map #(vector :li [:a %]) (type-keys type))]])
+   [:a title]
+   [:ul (map #(vector :li [:a %] [:input {:id (str type "-" % "-input-field") :type "text" :name % :class "input-field"}]) (type-keys type))]
+   [:button.submit-button {:id (str type "-submit-buddon")} "Submit"]])
 
 
 (defn index-page []
@@ -58,5 +60,5 @@
      [:div#container
       (list-window "task" "Tasks")
       (list-window "member" "Members")
-      (creation-window "task")]]
+      (creation-window "task" "Create new Task")]]
     (run-clojurescript "main.js" "themis.repl.connect()")]))
