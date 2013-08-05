@@ -33,8 +33,10 @@
 (defn add-task-to-project [task id]
   (let [document (get-document "projects" id)
         current-tasks (:tasks document)]
-    (if (blank? current-tasks)
-      (update-document "projects" document {:tasks (vector task)})
+    (if (not (vector? current-tasks))
+      (if (blank? current-tasks)
+        (update-document "projects" document {:tasks (vector task)})
+        (update-document "projects" document {:tasks (vector task current-tasks)}))
       (update-document "projects" document {:tasks (conj current-tasks task)}))))
 
 
