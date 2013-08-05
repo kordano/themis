@@ -94,11 +94,14 @@
   (go
    (let [data (<! (post-edn
                    "/insert/task/"
-                   {:name (dom/value (sel1 :#add-task-field))
-                    :project (:active-project (deref state))}))
+                   {:name (dom/value (sel1 :#task-description-input-field))
+                    :project (:active-project (deref state))
+                    :assigned-to (dom/value (sel1 :#task-assigned-to-input-field))
+                    :deadline (dom/value (sel1 :#tasl-deadline-input-field))}))
          html-task-list (create-task-list data)]
-     (-> (sel1 :#task-list)
-         (dom/set-html! html-task-list)))))
+     (do (-> (sel1 :#task-list)
+             (dom/set-html! html-task-list))
+         (doseq [field (sel :.input-field)] (dom/set-value! field ""))))))
 
 
 (defn send-project-data []
@@ -111,7 +114,8 @@
 
 (defn init []
   (do
-    (set! (.-onclick (sel1 :#projects)) (fn [] (show-all-projects)))))
+    (set! (.-onclick (sel1 :#projects)) (fn [] (show-all-projects)))
+    (set! (.-onclick (sel1 :#task-submit-button)) (fn [] (send-task-data)))))
 
 
 (set! (.-onload js/window) init)
