@@ -22,7 +22,7 @@
 
 (defn list-window [type title]
   [:div {:id (str type "-window") :class "type-window"}
-       [:a title] [:button.add-button {:type "button" :id (str type "-add-button")} "Add"]
+       [:a title]
    [:div {:id (str type "-list-window")}
     [:ul {:id (str type "-list") :class "type-list"}]]])
 
@@ -40,7 +40,7 @@
   [:div {:id (str type "-creation-window") :class "creation-window"}
    [:a title]
    [:ul (map #(vector :li [:a %] [:input {:id (str type "-" % "-input-field") :type "text" :name % :class "input-field"}]) (type-keys type))]
-   [:button.submit-button {:id (str type "-submit-buddon")} "Submit"]])
+   [:button.submit-button {:id (str type "-submit-button")} "Submit"]])
 
 
 (defn index-page []
