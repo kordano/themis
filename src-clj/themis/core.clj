@@ -9,7 +9,12 @@
         compojure.route
         [themis.database :as db]
         themis.views.index)
-  (:require [clojure.edn :as edn :refer [read-string]]))
+  (:require [clojure.edn :as edn :refer [read-string]]
+            [themis.database :as db :refer [insert-task
+                                            insert-member
+                                            insert-project
+                                            find-project
+                                            get-all-documents]]))
 
 
 (defn add-task [name project]
@@ -24,9 +29,13 @@
   (response "OK"))
 
 
+(defn get-init []
+  (response (db/get-init-information)))
+
+
 (defroutes handler
   (GET "/" [] (response (index-page)))
-  (GET "/projects" [] (response (db/get-all-documents "projects")))
+  (GET "/projects" [] (get-init))
   (GET "/projects/:id" [id] (response (db/find-project id)))
   (GET "/users" [] (response (db/get-all-documents "themis-users")))
   (POST "/insert/member/" request (let [data (read-string (slurp (:body request)))]
