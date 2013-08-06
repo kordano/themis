@@ -30,6 +30,14 @@
   (map #(get-document database %) (get-all-ids database)))
 
 
+(defn get-init-information []
+  {:current-projects (get-all-ids "projects")
+   :available-types {"task" (Task/getBasis)
+                     "project" (Project/getBasis)
+                     "member" (Member/getBasis)}})
+
+
+
 (defn add-task-to-project [task id]
   (let [document (get-document "projects" id)
         current-tasks (:tasks document)]
@@ -83,7 +91,7 @@
 #_(map #(inject (create-project (first %) :members (last %))) battles)
 
 
-(def generals [ "Akiyama Nobutomo"
+#_(def generals [ "Akiyama Nobutomo"
                 "Amari Torayasu"
                 "Anayama Baisetsu"
                 "Baba Nobufusa"
@@ -108,9 +116,9 @@
                 "Yamamoto Kansuke"
                 "Yokota Takamatsu"])
 
-(def battles ['("Uedahara" ["Itagaki Nobukata" "Amari Torayasu"])
+#_(def battles ['("Uedahara" ["Itagaki Nobukata" "Amari Torayasu"])
               '("Nagashino" ["Takeda Katsuyori" "Anayama Nobukimi" "Takeda Nobukado"])
               '("Kawanakajima" ["Yamamoto Kansuke" "Kōsaka Masanobu"]) ])
 
 
-(map #(find-member %) (:members (find-project "Uedahara")))
+#_(map #(find-member %) (:members (find-project "Uedahara")))
