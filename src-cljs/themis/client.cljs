@@ -128,7 +128,7 @@
                     (hiccups/html
                      (create-addition-window "task" "Create new task" type-keys))))
                     (set! (.-onclick (sel1 :#task-submit-button)) (fn [] (send-task-data)))
-                    )))))
+                    (set! (.-onclick (sel1 :#task-close-button)) (fn [] (-> (sel1 :#creation-container) (dom/set-html! "")))))))))
 
 
 (set! (.-onload js/window) init)
