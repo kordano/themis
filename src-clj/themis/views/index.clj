@@ -7,13 +7,6 @@
   (:import [themis.structures Task Project Member Person Contact Address]))
 
 
-(defn type-keys [type]
-  (cond
-   (= "task" type) (Task/getBasis)
-   (= "project" type) (Project/getBasis)
-   (= "member" type) (Member/getBasis)))
-
-
 (defn- run-clojurescript [path init]
   (list
    (include-js path)
@@ -32,8 +25,7 @@
    [:ul
     [:li [:a "&#9773;"]]
     [:li#type-add-action [:a "&#8853;"]]
-    [:li [:a "&#8854;"]]
-    [:li [:a "&#9760;"]]]])
+    [:li [:a "&#8854;"]]]])
 
 
 (defn index-page []
