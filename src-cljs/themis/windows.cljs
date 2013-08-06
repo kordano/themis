@@ -14,6 +14,6 @@
 
 (defn create-addition-window [type title type-keys]
   [:div {:id (str type "-creation-window") :class "creation-window"}
-   [:a title] [:button#task-close-button.close-button {:type "button"} "X"]
+   [:a title] [:button.close-button {:type "button" :id (str type "-close-button")} "X"]
    [:ul (map #(vector :li [:a %] [:input {:id (str type "-" % "-input-field") :type "text" :name % :class "input-field"}]) (type-keys type))]
    [:button.submit-button {:id (str type "-submit-button")} "Submit"]])
