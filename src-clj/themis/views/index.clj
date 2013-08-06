@@ -31,16 +31,9 @@
   [:div#action-bar.bar
    [:ul
     [:li [:a "&#9773;"]]
-    [:li [:a "&#8853;"]]
+    [:li#type-add-action [:a "&#8853;"]]
     [:li [:a "&#8854;"]]
     [:li [:a "&#9760;"]]]])
-
-
-(defn creation-window [type title]
-  [:div {:id (str type "-creation-window") :class "creation-window"}
-   [:a title]
-   [:ul (map #(vector :li [:a %] [:input {:id (str type "-" % "-input-field") :type "text" :name % :class "input-field"}]) (type-keys type))]
-   [:button.submit-button {:id (str type "-submit-button")} "Submit"]])
 
 
 (defn index-page []
@@ -59,6 +52,5 @@
      (action-bar)
      [:div#container
       (list-window "task" "Tasks")
-      (list-window "member" "Members")
-      (creation-window "task" "Create new Task")]]
+      [:div#creation-container]]]
     (run-clojurescript "main.js" "themis.repl.connect()")]))
