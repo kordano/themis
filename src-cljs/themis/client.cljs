@@ -139,6 +139,5 @@
 
 (set! (.-onload js/window) init)
 
-#_
 
 ;; TODO mouseover info, refactor functions
