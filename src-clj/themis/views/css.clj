@@ -81,6 +81,7 @@
     {:border-style :none
      :cursor :pointer
      :width "100%"
+     :font-size (pt 13)
      :color default-font-color
      :background dark-background-color}
     [:&:hover
