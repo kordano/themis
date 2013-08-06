@@ -132,3 +132,12 @@
 
 
 (set! (.-onload js/window) init)
+
+#_(set! (.-onclick (sel1 :#project-add-action))
+          (fn [] (do (-> (sel1 :#creation-container) (dom/set-html!
+                    (hiccups/html
+                     (create-addition-window "project" "Create new project" type-keys))))
+                    (set! (.-onclick (sel1 :#project-submit-button)) (fn [] (js/alert "hu")))
+                    (set! (.-onclick (sel1 :#project-close-button)) (fn [] (-> (sel1 :#creation-container) (dom/set-html! "")))))))
+
+;; TODO mouseover info, refactor functions
