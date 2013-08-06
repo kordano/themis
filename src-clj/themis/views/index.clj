@@ -23,7 +23,7 @@
 (defn action-bar []
   [:div#action-bar.bar
    [:ul
-    [:li [:a "&#9773;"]]
+    [:li#project-add-action [:a "&#9773;"]]
     [:li#type-add-action [:a "&#8853;"]]
     [:li [:a "&#8854;"]]]])
 
