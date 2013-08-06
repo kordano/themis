@@ -128,16 +128,17 @@
                     (hiccups/html
                      (create-addition-window "task" "Create new task" type-keys))))
                     (set! (.-onclick (sel1 :#task-submit-button)) (fn [] (send-task-data)))
-                    (set! (.-onclick (sel1 :#task-close-button)) (fn [] (-> (sel1 :#creation-container) (dom/set-html! "")))))))))
-
-
-(set! (.-onload js/window) init)
-
-#_(set! (.-onclick (sel1 :#project-add-action))
+                    (set! (.-onclick (sel1 :#task-close-button)) (fn [] (-> (sel1 :#creation-container) (dom/set-html! "")))))))
+    (set! (.-onclick (sel1 :#project-add-action))
           (fn [] (do (-> (sel1 :#creation-container) (dom/set-html!
                     (hiccups/html
                      (create-addition-window "project" "Create new project" type-keys))))
                     (set! (.-onclick (sel1 :#project-submit-button)) (fn [] (js/alert "hu")))
-                    (set! (.-onclick (sel1 :#project-close-button)) (fn [] (-> (sel1 :#creation-container) (dom/set-html! "")))))))
+                    (set! (.-onclick (sel1 :#project-close-button)) (fn [] (-> (sel1 :#creation-container) (dom/set-html! "")))))))))
+
+
+(set! (.-onload js/window) init)
+
+#_
 
 ;; TODO mouseover info, refactor functions
