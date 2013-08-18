@@ -1,15 +1,19 @@
 (ns themis.database
-  (:refer-clojure :exclude [assoc! conj! dissoc!])
+  (:refer-clojure :exclude [assoc! conj! dissoc! ==])
   (:require [clojure.core :as core]
-            [clojure.string :refer [blank?]])
+            [clojure.string :refer [blank?]]
+            [clojure.core.logic :refer [run run* fresh membero conde]])
   (:use themis.structures
         [com.ashafa.clutch])
   (:import [themis.structures Task Project Member Person Contact Address]))
 
-#_(defn init-db []
+
+(defn init-db []
+  "Initializes databases if they don't exist yet"
   (do
     (get-database "projects")
     (get-database "tasks")
+    (get-database "relations")
     (get-database "members")
     (get-database "people")))
 
@@ -35,52 +39,6 @@
    :available-types {"task" (Task/getBasis)
                      "project" (Project/getBasis)
                      "member" (Member/getBasis)}})
-
-
-
-(defn add-task-to-project [task id]
-  (let [document (get-document "projects" id)
-        current-tasks (:tasks document)]
-    (if (not (vector? current-tasks))
-      (if (blank? current-tasks)
-        (update-document "projects" document {:tasks (vector task)})
-        (update-document "projects" document {:tasks (vector task current-tasks)}))
-      (update-document "projects" document {:tasks (conj current-tasks task)}))))
-
-
-(defn remove-task-from-project [task id]
-  (let [document (get-document "projects" id)
-        current-tasks (:tasks document)]
-    (update-document "projects" document {:tasks (filter #(not= task %) current-tasks)})))
-
-
-(defn add-member-to-project [member id]
-  (let [document (get-document "projects" id)
-        current-members (:members document)]
-    (if-not (contains? (set current-members) member) ;; find better error handling for existing entries in database
-      (update-document "projects" document {:members (conj current-members member)}))))
-
-
-(defn remove-member-from-project [id member]
-  (let [document (get-document "projects" id)
-        current-members (:members document)
-        current-tasks (:tasks document)]
-    (update-document "projects" document {:members (filter #(not= member %) current-members)})))
-
-
-(defn insert-member [name & {:keys [project]}]
-  (do
-    (inject (create-member name))
-    (add-member-to-project name project)))
-
-(defn insert-task [name & {:keys [project]}]
-  (do
-    (inject (create-task name))
-    (add-task-to-project name project)))
-
-(defn insert-project [name & {:keys [members]}]
-  (inject (create-project name :members members)))
-
 
 
 ;; ------- Testing Stuff -------------------------------------------------------

@@ -10,23 +10,20 @@
         [themis.database :as db]
         themis.views.index)
   (:require [clojure.edn :as edn :refer [read-string]]
-            [themis.database :as db :refer [insert-task
-                                            insert-member
-                                            insert-project
-                                            find-project
+            [themis.database :as db :refer [find-project
                                             get-all-documents]]))
 
 
 (defn add-task [name project]
-  (response (db/insert-task name :project project)))
+  (response 42))
 
 
 (defn add-member [name project]
-  (response (db/insert-member name :project project)))
+  (response 42))
 
 
 (defn add-project [name]
-  (response "OK"))
+  (response 42))
 
 
 (defn get-init []
@@ -35,6 +32,7 @@
 
 (defroutes handler
   (GET "/" [] (response (index-page)))
+  (GET "/tabs" [] (response (tab-page)))
   (GET "/projects" [] (get-init))
   (GET "/projects/:id" [id] (response (db/find-project id)))
   (GET "/users" [] (response (db/get-all-documents "themis-users")))

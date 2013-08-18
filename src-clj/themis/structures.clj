@@ -10,12 +10,12 @@
   (inject [entry]))
 
 
-(defrecord Relation [record-id1 record-id2]
+(defrecord Relation [record1 record2]
   database-interaction
   (inject [entry] (put-document "relations" entry)))
 
 
-(defrecord Project [_id created-at]
+(defrecord Project [name created-at]
   database-interaction
   (inject [entry] (put-document "projects" entry)))
 
@@ -42,8 +42,8 @@
 
 
 (defn create-relation
-  [record-id1 record-id2]
-  (Relation. record-id1 record-id2))
+  [record1 record2]
+  (Relation. record1 record2))
 
 
 (defn create-project [name]
