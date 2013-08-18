@@ -13,6 +13,7 @@
                  [hiccup "1.0.2"]
                  [cheshire "5.2.0"]
                  [garden "0.1.0-beta6"]
+                 [org.clojure/core.logic "0.8.3"]
                  [com.ashafa/clutch "0.4.0-RC1"]
                  [compojure "1.1.5"]
                  ;; Client side
