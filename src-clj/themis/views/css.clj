@@ -102,11 +102,21 @@
     {:text-align :center
      :font-weight :bold}]])
 
+(defn- type-list-window-css []
+  [:.type-list-window
+   {:border-style :solid
+    :border-color dark-background-color
+    :border-width (px 1)
+    :height "100%"
+    :width "100%"}])
+
 (defn- type-list-css []
   [:.type-list
    {:list-style :none
     :padding 0
-    :margin-left 0}])
+    :margin-left 0}
+   [:li
+    {:height "100%"}]])
 
 (defn- type-css []
   [:.type
@@ -138,40 +148,8 @@
       :margin 0}]]])
 
 
-(defn- fun-timer-container-css []
-  [:#centercontainer
-   {:margin :auto
-    :padding-top (em 4.0)
-    :width (px 600)}])
-
-
-(defn- fun-timer-button-css []
-  [:#timer-button
-   {:float :right
-     :border-style :none
-     :cursor :pointer
-     :color default-font-color
-    :background dark-background-color}
-   [:&:hover
-     {:color hover-color}]])
-
-(defn- fun-timer-css []
-  [:#timer
-   {:width (px 500)
-    :background overall-background-color
-    :margin :auto}
-   [:& :a
-    {:padding 0
-     :font-size (pt 64)
-     :text-align :center
-     :font-family "Inconsolata"
-     :background dark-background-color
-     :color hover-color
-     :vertical-align :middle}]])
-
 (defn- wrap-css []
   [:#wrap {:height "100%"}])
-
 
 
 (defn- action-bar-css []
@@ -204,6 +182,34 @@
     :padding 0
     :margin 0}])
 
+
+(defn- tabs-header-css []
+  [:#tabs-header
+   [:ul
+    {:list-style :none
+     :padding 0
+     :margin 0}]
+   [:li
+    {:display :inline
+     :border-style :solid
+     :border-top-width (px 1)
+     :border-right-width (px 1)
+     :border-bottom-width 0
+     :border-left-width (px 1)
+     :margin-top 0
+     :margin-right (em 0.5)
+     :margin-bottom 0
+     :margin-left 0}
+    [:a
+     {:padding-top 0
+      :padding-bottom 0
+      :padding-right (em 1)
+      :padding-left (em 1)}]]])
+
+(defn- tabs-content-css []
+  [:#tabs-content
+   {:border :none}])
+
 (defn overall-css []
   (css
    (body-css)
@@ -213,6 +219,8 @@
    (type-window-css)
    (type-list-css)
    (type-css)
+   (tabs-header-css)
+   (tabs-content-css)
    (action-bar-css)
    (type-creation-window-css)
    (input-field-css)

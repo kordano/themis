@@ -46,3 +46,34 @@
       (list-window "task" "Tasks")
       [:div#creation-container]]]
     (run-clojurescript "main.js" "themis.repl.connect()")]))
+
+
+(defn tabs-header []
+  [:div#tabs-header
+   [:ul
+    [:li [:a {:href "#"} "This"]]
+    [:li [:a#selected {:href "#"} "That"]]
+    [:li [:a {:href "#"} "Other"]]
+    [:li [:a {:href "#"} "Banana"]]]])
+
+(defn tabs-content []
+  [:div#tabs-content
+   [:p "Alles aber ist geworden, es gibt keine ewigen Tatsachen: so wie es keine absoluten Wahrheiten gibt."]])
+
+(defn tab-page []
+  (html5
+   [:head
+    [:title "Themis"]
+    [:style {:type "text/css"} (overall-css)]
+    (include-js "http://ajax.googleapis.com/ajax/libs/jquery/1.8.0/jquery.min.js")]
+   [:body
+    [:div#wrap
+     [:div#header
+      [:div#header-description
+       [:a#projects "Projects"]]
+      [:div#header-projects-list
+       [:ul#projectnav]]]
+     [:div#container
+      (tabs-header)
+      (tabs-content)]]
+    (run-clojurescript "main.js" "themis.repl.connect()")]))
