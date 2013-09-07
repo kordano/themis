@@ -24,6 +24,8 @@
               [:task :id 1 :description "do something" :project-id 1 :user-id 1 :creation-date (now)]
               [:task :id 2 :description "do nothing" :project-id 2 :user-id 2 :creation-date (now)]
               [:task :id 3 :description "fuck you!" :project-id 2 :user-id 1 :creation-date (now)]
+              [:task :id 4 :description "attack!" :project-id 1 :user-id 1 :creation-date (now)]
+              [:task :id 5 :description "run" :project-id 1 :user-id 2 :creation-date (now)]
               [:project :id 1 :name "war" :creator 1 :creation-date (now)]
               [:project :id 2 :name "peace" :creator 2 :creation-date (now)]
               [:user :id 1 :name "john" :creation-date (now)]
@@ -35,9 +37,9 @@
    (<- (:project-tasks :name ?p :task ?d)
        (:project :id ?i :name ?p)
        (:task :project-id ?i :description ?d))
-   (<- (:user-tasks :name ?n :task ?d :project ?p)
+   (<- (:user-tasks :name ?n :task ?d :project ?p )
        (:user :id ?u :name ?n)
-       (:task :id ?t :description ?d :project-id ?pi :user-id ?u)
+       (:task :id ?t :description ?d :project-id ?pi :user-id ?u )
        (:project :id ?pi :name ?p))))
 
 
@@ -47,7 +49,7 @@
 
 (def wp-2 (build-work-plan
            rules
-           (?- :user-tasks :name '??name :task ?d :project ?p)))
+           (?- :user-tasks :name '??name)))
 
 #_(run-work-plan wp-1 db {'??name "war"})
 #_(run-work-plan wp-2 db {'??name "john"})
