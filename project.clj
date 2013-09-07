@@ -16,6 +16,7 @@
                  [org.clojure/core.logic "0.8.3"]
                  [com.ashafa/clutch "0.4.0-RC1"]
                  [compojure "1.1.5"]
+                 [fogus/bacwn "0.3.0"]
                  ;; Client side
                  [org.clojure/clojurescript "0.0-1820"]
                  [org.clojure/core.async "0.1.0-SNAPSHOT"]
