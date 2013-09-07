@@ -5,34 +5,29 @@
         [fogus.datalog.bacwn.impl.rules :only (rules-set)]
         [fogus.datalog.bacwn.impl.database :only (add-tuples)]))
 
+(defn now [] (new java.util.Date))
 
 (def db-base
   (make-database
-   (relation :task [:id :description :project-id])
+   (relation :task [:id :description :project-id :user-id :creation-date])
    (index :task :description)
 
-   (relation :project [:id :name :creator])
+   (relation :project [:id :name :creator :creation-date])
    (index :project :name)
 
-   (relation :user [:id :name])
-   (index :user :name)
-
-   (relation :assignment [:user-id :task-id])
-   (index :assignment :user-id)))
+   (relation :user [:id :name :creation-date])
+   (index :user :name)))
 
 
 (def db
   (add-tuples db-base
-              [:task :id 1 :description "do something" :project-id 1]
-              [:task :id 2 :description "do nothing" :project-id 2]
-              [:task :id 3 :description "fuck you!" :project-id 1]
-              [:project :id 1 :name "war" :creator 1]
-              [:project :id 2 :name "peace" :creator 2]
-              [:user :id 1 :name "john"]
-              [:user :id 2 :name "jane"]
-              [:assignment :user-id 1 :task-id 2]
-              [:assignment :user-id 1 :task-id 3]
-              [:assignment :user-id 2 :task-id 1]))
+              [:task :id 1 :description "do something" :project-id 1 :user-id 1 :creation-date (now)]
+              [:task :id 2 :description "do nothing" :project-id 2 :user-id 2 :creation-date (now)]
+              [:task :id 3 :description "fuck you!" :project-id 2 :user-id 1 :creation-date (now)]
+              [:project :id 1 :name "war" :creator 1 :creation-date (now)]
+              [:project :id 2 :name "peace" :creator 2 :creation-date (now)]
+              [:user :id 1 :name "john" :creation-date (now)]
+              [:user :id 2 :name "jane" :creation-date (now)]))
 
 
 (def rules
@@ -42,8 +37,7 @@
        (:task :project-id ?i :description ?d))
    (<- (:user-tasks :name ?n :task ?d :project ?p)
        (:user :id ?u :name ?n)
-       (:assignment :user-id ?u :task-id ?t)
-       (:task :id ?t :description ?d :project-id ?pi)
+       (:task :id ?t :description ?d :project-id ?pi :user-id ?u)
        (:project :id ?pi :name ?p))))
 
 
@@ -55,5 +49,5 @@
            rules
            (?- :user-tasks :name '??name :task ?d :project ?p)))
 
-(run-work-plan wp-1 db {'??name "war"})
-(run-work-plan wp-2 db {'??name "john"})
+#_(run-work-plan wp-1 db {'??name "war"})
+#_(run-work-plan wp-2 db {'??name "john"})
