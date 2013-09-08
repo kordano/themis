@@ -1,13 +1,15 @@
 (ns themis.datalog
-  (:require [fogus.datalog.bacwn.impl.literals :as literals])
   (:use [fogus.datalog.bacwn :only (build-work-plan run-work-plan)]
         [fogus.datalog.bacwn.macros :only (<- ?- make-database)]
         [fogus.datalog.bacwn.impl.rules :only (rules-set)]
-        [fogus.datalog.bacwn.impl.database :only (add-tuples)]))
+        [fogus.datalog.bacwn.impl.database :only (add-tuples database-counts get-relation)]
+        [com.ashafa.clutch])
+  (:require [fogus.datalog.bacwn.impl.literals :as literals]))
 
 (defn now [] (new java.util.Date))
 
 (def db-base
+  "db scheme"
   (make-database
    (relation :task [:id :description :project-id :user-id :creation-date])
    (index :task :description)
@@ -47,9 +49,27 @@
            rules
            (?- :project-tasks :name '??name :task ?d)))
 
+
 (def wp-2 (build-work-plan
            rules
            (?- :user-tasks :name '??name)))
 
+
+;; COUCHDB stuff
+
+(defn init-datalog-dbs []
+  "Create datalog databases if not available"
+  (map get-database ["datalog-user" "datalog-project" "datalog-task"]))
+
+(defn write-to-local-db []
+  "write all relations to db"
+  (let [users (map #(put-document "datalog-user" %) (:data (get-relation db :user)))
+        projects (map #(put-document "datalog-project" %) (:data (get-relation db :project)))
+        tasks (map #(put-document "datalog-task" %) (:data (get-relation db :task)))]
+    (map count [users projects tasks])))
+
+
 #_(run-work-plan wp-1 db {'??name "war"})
 #_(run-work-plan wp-2 db {'??name "john"})
+#_(database-counts db)
+#_(init-datalog-dbs)
