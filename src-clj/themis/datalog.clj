@@ -2,14 +2,15 @@
   (:use [fogus.datalog.bacwn :only (build-work-plan run-work-plan)]
         [fogus.datalog.bacwn.macros :only (<- ?- make-database)]
         [fogus.datalog.bacwn.impl.rules :only (rules-set)]
-        [fogus.datalog.bacwn.impl.database :only (add-tuples database-counts get-relation)]
-        [com.ashafa.clutch])
+        [fogus.datalog.bacwn.impl.database :only (add-tuples add-tuple database-counts get-relation)]
+        [com.ashafa.clutch :exclude (:assoc!)])
   (:require [fogus.datalog.bacwn.impl.literals :as literals]))
+
 
 (defn now [] (new java.util.Date))
 
+
 (def db-base
-  "db scheme"
   (make-database
    (relation :task [:id :description :project-id :user-id :creation-date])
    (index :task :description)
@@ -34,6 +35,10 @@
               [:user :id 2 :name "jane" :creation-date (now)]))
 
 
+(defn db2 [tuples]
+  (apply add-tuples db-base tuples))
+
+
 (def rules
   (rules-set
    (<- (:project-tasks :name ?p :task ?d)
@@ -55,11 +60,21 @@
            (?- :user-tasks :name '??name)))
 
 
-;; COUCHDB stuff
+
+;; ---- COUCHDB stuff ----
+
+(defn get-all-ids [database]
+  (map #(:id %) (all-documents database)))
+
+
+(defn get-all-documents [database]
+  (map #(get-document database %) (get-all-ids database)))
+
 
 (defn init-datalog-dbs []
   "Create datalog databases if not available"
   (map get-database ["datalog-user" "datalog-project" "datalog-task"]))
+
 
 (defn write-to-local-db []
   "write all relations to db"
@@ -69,7 +84,20 @@
     (map count [users projects tasks])))
 
 
-#_(run-work-plan wp-1 db {'??name "war"})
-#_(run-work-plan wp-2 db {'??name "john"})
+
+;; ---- TESTING ----
+
+(def test-db [[:task :id 1 :description "do something" :project-id 1 :user-id 1 :creation-date (now)]
+                [:task :id 2 :description "do nothing" :project-id 2 :user-id 2 :creation-date (now)]
+                [:task :id 3 :description "fuck you!" :project-id 2 :user-id 1 :creation-date (now)]
+                [:task :id 4 :description "attack!" :project-id 1 :user-id 1 :creation-date (now)]
+                [:task :id 5 :description "run" :project-id 1 :user-id 2 :creation-date (now)]
+                [:project :id 1 :name "war" :creator 1 :creation-date (now)]
+                [:project :id 2 :name "peace" :creator 2 :creation-date (now)]
+                [:user :id 1 :name "john" :creation-date (now)]
+                [:user :id 2 :name "jane" :creation-date (now)]])
+
+#_(run-work-plan wp-1 (db2 test-db) {'??name "war"})
+#_(run-work-plan wp-2 (db2 test-db) {'??name "john"})
 #_(database-counts db)
 #_(init-datalog-dbs)
