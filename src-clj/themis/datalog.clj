@@ -84,20 +84,43 @@
     (map count [users projects tasks])))
 
 
+(defn convert-to-datalog-entry [entry db]
+  (let [raw-entry (dissoc entry :_rev :_id)
+        raw-keys (keys raw-entry)]
+    (apply vector (keyword db) (flatten (map #(vector % (% raw-entry)) raw-keys)))))
+
 
 ;; ---- TESTING ----
 
 (def test-db [[:task :id 1 :description "do something" :project-id 1 :user-id 1 :creation-date (now)]
-                [:task :id 2 :description "do nothing" :project-id 2 :user-id 2 :creation-date (now)]
-                [:task :id 3 :description "fuck you!" :project-id 2 :user-id 1 :creation-date (now)]
-                [:task :id 4 :description "attack!" :project-id 1 :user-id 1 :creation-date (now)]
-                [:task :id 5 :description "run" :project-id 1 :user-id 2 :creation-date (now)]
-                [:project :id 1 :name "war" :creator 1 :creation-date (now)]
-                [:project :id 2 :name "peace" :creator 2 :creation-date (now)]
-                [:user :id 1 :name "john" :creation-date (now)]
-                [:user :id 2 :name "jane" :creation-date (now)]])
+                 [:task :id 2 :description "do nothing" :project-id 2 :user-id 2 :creation-date (now)]
+                 [:task :id 3 :description "fuck you!" :project-id 2 :user-id 1 :creation-date (now)]
+                 [:task :id 4 :description "attack!" :project-id 1 :user-id 1 :creation-date (now)]
+                 [:task :id 5 :description "run" :project-id 1 :user-id 2 :creation-date (now)]
+                 [:project :id 1 :name "war" :creator 1 :creation-date (now)]
+                 [:project :id 2 :name "peace" :creator 2 :creation-date (now)]
+                 [:user :id 1 :name "john" :creation-date (now)]
+                 [:user :id 2 :name "jane" :creation-date (now)]])
 
-#_(run-work-plan wp-1 (db2 test-db) {'??name "war"})
-#_(run-work-plan wp-2 (db2 test-db) {'??name "john"})
+
+(def couchdb-entries
+  (let [users (get-all-documents "datalog-user")
+        tasks (get-all-documents "datalog-task")
+        projects (get-all-documents "datalog-project")]
+    {:user users
+     :task tasks
+     :project projects}))
+
+
+(def converted-entries
+  (let [users (map #(convert-to-datalog-entry % "user") (:user couchdb-entries))
+        tasks (map #(convert-to-datalog-entry % "task") (:task couchdb-entries))
+        projects (map #(convert-to-datalog-entry % "project") (:project couchdb-entries))]
+    (apply conj users (apply conj projects tasks))))
+
+
+#_(run-work-plan wp-1 (db2 converted-entries) {'??name "war"})
+#_(run-work-plan wp-2 (db2 converted-entries) {'??name "john"})
 #_(database-counts db)
 #_(init-datalog-dbs)
+#_(:user couchdb-entries)
