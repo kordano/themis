@@ -10,58 +10,8 @@
 (defn now [] (new java.util.Date))
 
 
-(def db-base
-  (make-database
-   (relation :task [:id :description :project-id :user-id :creation-date])
-   (index :task :description)
 
-   (relation :project [:id :name :creator :creation-date])
-   (index :project :name)
-
-   (relation :user [:id :name :creation-date])
-   (index :user :name)))
-
-
-(def db
-  (add-tuples db-base
-              [:task :id 1 :description "do something" :project-id 1 :user-id 1 :creation-date (now)]
-              [:task :id 2 :description "do nothing" :project-id 2 :user-id 2 :creation-date (now)]
-              [:task :id 3 :description "fuck you!" :project-id 2 :user-id 1 :creation-date (now)]
-              [:task :id 4 :description "attack!" :project-id 1 :user-id 1 :creation-date (now)]
-              [:task :id 5 :description "run" :project-id 1 :user-id 2 :creation-date (now)]
-              [:project :id 1 :name "war" :creator 1 :creation-date (now)]
-              [:project :id 2 :name "peace" :creator 2 :creation-date (now)]
-              [:user :id 1 :name "john" :creation-date (now)]
-              [:user :id 2 :name "jane" :creation-date (now)]))
-
-
-(defn db2 [tuples]
-  (apply add-tuples db-base tuples))
-
-
-(def rules
-  (rules-set
-   (<- (:project-tasks :name ?p :task ?d)
-       (:project :id ?i :name ?p)
-       (:task :project-id ?i :description ?d))
-   (<- (:user-tasks :name ?n :task ?d :project ?p )
-       (:user :id ?u :name ?n)
-       (:task :id ?t :description ?d :project-id ?pi :user-id ?u )
-       (:project :id ?pi :name ?p))))
-
-
-(def wp-1 (build-work-plan
-           rules
-           (?- :project-tasks :name '??name :task ?d)))
-
-
-(def wp-2 (build-work-plan
-           rules
-           (?- :user-tasks :name '??name)))
-
-
-
-;; ---- COUCHDB stuff ----
+                                        ; ---- COUCHDB stuff ----
 
 (defn get-all-ids [database]
   (map #(:id %) (all-documents database)))
@@ -90,20 +40,7 @@
     (apply vector (keyword db) (flatten (map #(vector % (% raw-entry)) raw-keys)))))
 
 
-;; ---- TESTING ----
-
-(def test-db [[:task :id 1 :description "do something" :project-id 1 :user-id 1 :creation-date (now)]
-                 [:task :id 2 :description "do nothing" :project-id 2 :user-id 2 :creation-date (now)]
-                 [:task :id 3 :description "fuck you!" :project-id 2 :user-id 1 :creation-date (now)]
-                 [:task :id 4 :description "attack!" :project-id 1 :user-id 1 :creation-date (now)]
-                 [:task :id 5 :description "run" :project-id 1 :user-id 2 :creation-date (now)]
-                 [:project :id 1 :name "war" :creator 1 :creation-date (now)]
-                 [:project :id 2 :name "peace" :creator 2 :creation-date (now)]
-                 [:user :id 1 :name "john" :creation-date (now)]
-                 [:user :id 2 :name "jane" :creation-date (now)]])
-
-
-(def couchdb-entries
+(defn get-couchdb-entries []
   (let [users (get-all-documents "datalog-user")
         tasks (get-all-documents "datalog-task")
         projects (get-all-documents "datalog-project")]
@@ -112,15 +49,72 @@
      :project projects}))
 
 
-(def converted-entries
-  (let [users (map #(convert-to-datalog-entry % "user") (:user couchdb-entries))
-        tasks (map #(convert-to-datalog-entry % "task") (:task couchdb-entries))
-        projects (map #(convert-to-datalog-entry % "project") (:project couchdb-entries))]
+(defn convert-entries []
+  (let [users (map #(convert-to-datalog-entry % "user") (:user (get-couchdb-entries)))
+        tasks (map #(convert-to-datalog-entry % "task") (:task (get-couchdb-entries)))
+        projects (map #(convert-to-datalog-entry % "project") (:project (get-couchdb-entries)))]
     (apply conj users (apply conj projects tasks))))
 
 
-#_(run-work-plan wp-1 (db2 converted-entries) {'??name "war"})
-#_(run-work-plan wp-2 (db2 converted-entries) {'??name "john"})
-#_(database-counts db)
+
+                                        ; ----- datalog magic -----
+
+(def db-base
+  (make-database
+   (relation :task [:id :description :project-id :user-id :creation-date])
+   (index :task :description)
+
+   (relation :project [:id :name :creator :creation-date])
+   (index :project :name)
+
+   (relation :user [:id :name :creation-date])
+   (index :user :name)))
+
+
+(defn db [tuples]
+  (apply add-tuples db-base tuples))
+
+
+(def rules
+  (rules-set
+   (<- (:project-tasks :name ?p :task ?d)
+       (:project :id ?i :name ?p)
+       (:task :project-id ?i :description ?d))
+   (<- (:user-tasks :name ?n :task ?d :project ?p )
+       (:user :id ?u :name ?n)
+       (:task :id ?t :description ?d :project-id ?pi :user-id ?u )
+       (:project :id ?pi :name ?p))))
+
+
+(def wp-1 (build-work-plan
+           rules
+           (?- :project-tasks :name '??name :task ?d)))
+
+
+(def wp-2 (build-work-plan
+           rules
+           (?- :user-tasks :name '??name)))
+
+
+
+                                        ; ---- run queries ----
+
+(defn get-project-tasks [name]
+  (run-work-plan wp-1 (db converted-entries) {'??name name}))
+
+
+(defn get-user-tasks [name]
+  (run-work-plan wp-2 (db converted-entries) {'??name name}))
+
+
+
+                                        ; ---- TESTING ----
+
+#_(get-project-tasks "war")
+#_(database-counts (db converted-entries))
+;eval only once to initialize couch db entries
 #_(init-datalog-dbs)
-#_(:user couchdb-entries)
+#_(write-to-local-db)
+#_(get-user-tasks "john")
+#_ (convert-entries)
+#_ (get-couchdb-entries)
